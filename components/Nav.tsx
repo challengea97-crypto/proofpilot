@@ -21,6 +21,12 @@ export function Nav() {
         >
           Pricing
         </Link>
+        <Link
+          href="/faq"
+          className={`${buttonVariants({ variant: "ghost", size: "sm" })} hidden sm:inline-flex`}
+        >
+          FAQ
+        </Link>
         <Link href="/login" className={buttonVariants({ variant: "secondary", size: "sm" })}>
           Sign in
         </Link>

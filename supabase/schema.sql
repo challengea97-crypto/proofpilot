@@ -88,6 +88,14 @@ create table if not exists public.notifications (
 alter table public.reports add column if not exists share_token text;
 create unique index if not exists reports_share_token_key on public.reports (share_token);
 
+create table if not exists public.contact_messages (
+  id uuid primary key default uuid_generate_v4(),
+  name text not null,
+  email text not null,
+  message text not null,
+  created_at timestamptz default now()
+);
+
 alter table public.profiles enable row level security;
 alter table public.projects enable row level security;
 alter table public.reports enable row level security;
@@ -150,3 +158,11 @@ create policy "Users can manage own notifications"
 on public.notifications for all
 using (auth.uid() = user_id)
 with check (auth.uid() = user_id);
+
+alter table public.contact_messages enable row level security;
+
+-- Anyone can submit a contact message; only the service role can read them.
+drop policy if exists "Anyone can submit a contact message" on public.contact_messages;
+create policy "Anyone can submit a contact message"
+on public.contact_messages for insert
+with check (true);

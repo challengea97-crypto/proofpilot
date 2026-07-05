@@ -10,6 +10,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { Nav } from "@/components/Nav";
+import { Footer } from "@/components/Footer";
 import { buttonVariants } from "@/components/ui/Button";
 
 const FEATURES = [
@@ -156,19 +157,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <footer className="mx-auto max-w-7xl px-6 py-10 text-sm text-neutral-600">
-        <div className="flex flex-col items-center justify-between gap-4 border-t border-neutral-800 pt-8 sm:flex-row">
-          <p>© {new Date().getFullYear()} Teckro. Proof before build.</p>
-          <div className="flex gap-4">
-            <Link href="/pricing" className="hover:text-neutral-300">
-              Pricing
-            </Link>
-            <Link href="/login" className="hover:text-neutral-300">
-              Sign in
-            </Link>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </main>
   );
 }

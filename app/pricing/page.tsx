@@ -1,4 +1,5 @@
 import { Nav } from "@/components/Nav";
+import { Footer } from "@/components/Footer";
 import { PricingCards } from "@/components/PricingCards";
 
 export default function PricingPage() {
@@ -14,6 +15,7 @@ export default function PricingPage() {
           <PricingCards />
         </div>
       </section>
+      <Footer />
     </main>
   );
 }
