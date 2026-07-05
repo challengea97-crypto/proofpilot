@@ -5,6 +5,7 @@ import { requireUser } from "@/lib/auth";
 import { getProject } from "@/lib/data/projects";
 import { getLatestResearch } from "@/lib/data/research";
 import { getLatestAnalyses } from "@/lib/data/analyses";
+import { listWatchItems } from "@/lib/data/watchlist";
 import { isAnthropicConfigured } from "@/lib/env";
 import { ResearchResultSchema, type ResearchResult } from "@/lib/ai/research-schema";
 import { buildFounderReport } from "@/lib/reports/build";
@@ -37,6 +38,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   }
 
   const analyses = await getLatestAnalyses(user.id, project.id);
+  const watchItems = await listWatchItems(user.id, project.id);
   const report = buildFounderReport(
     { name: project.name, idea: project.idea, audience: project.audience, problem: project.problem },
     research,
@@ -66,6 +68,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         research={research}
         analyses={analyses}
         report={report}
+        watchItems={watchItems}
         configured={configured}
       />
     </div>

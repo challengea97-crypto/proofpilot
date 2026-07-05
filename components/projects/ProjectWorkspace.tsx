@@ -8,12 +8,13 @@ import { Badge } from "@/components/ui/Badge";
 import { ResearchPanel } from "@/components/research/ResearchPanel";
 import { AnalysisPanel } from "@/components/analysis/AnalysisPanel";
 import { ReportPanel } from "@/components/reports/ReportPanel";
+import { WatchlistPanel } from "@/components/watchlist/WatchlistPanel";
 import { ANALYSIS_KINDS, ANALYSIS_CONFIG, type AnalysisKind, type AnalysisResult } from "@/lib/ai/analysis-kinds";
-import type { ProjectRow } from "@/lib/supabase/types";
+import type { ProjectRow, WatchlistItemRow } from "@/lib/supabase/types";
 import type { ResearchResult } from "@/lib/ai/research-schema";
 import type { FounderReport } from "@/lib/reports/build";
 
-type TabKey = "overview" | "research" | "report" | AnalysisKind;
+type TabKey = "overview" | "research" | "watchlist" | "report" | AnalysisKind;
 
 function Field({ label, value }: { label: string; value: string | null }) {
   return (
@@ -98,12 +99,14 @@ export function ProjectWorkspace({
   research,
   analyses,
   report,
+  watchItems,
   configured,
 }: {
   project: ProjectRow;
   research: ResearchResult | null;
   analyses: Record<AnalysisKind, AnalysisResult | null>;
   report: FounderReport;
+  watchItems: WatchlistItemRow[];
   configured: boolean;
 }) {
   const [tab, setTab] = useState<TabKey>("overview");
@@ -112,6 +115,7 @@ export function ProjectWorkspace({
     { key: "overview", label: "Overview" },
     { key: "research", label: "Research" },
     ...ANALYSIS_KINDS.map((k) => ({ key: k as TabKey, label: ANALYSIS_CONFIG[k].title })),
+    { key: "watchlist", label: "Watchlist" },
     { key: "report", label: "Report" },
   ];
 
@@ -144,6 +148,7 @@ export function ProjectWorkspace({
         {tab === "research" && (
           <ResearchPanel projectId={project.id} latest={research} configured={configured} />
         )}
+        {tab === "watchlist" && <WatchlistPanel projectId={project.id} items={watchItems} />}
         {tab === "report" && <ReportPanel projectId={project.id} report={report} />}
         {ANALYSIS_KINDS.map(
           (k) =>

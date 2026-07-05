@@ -198,6 +198,36 @@ export interface Database {
         };
         Relationships: [];
       };
+      watchlist_items: {
+        Row: {
+          id: string;
+          user_id: string;
+          project_id: string | null;
+          label: string;
+          url: string | null;
+          note: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          project_id?: string | null;
+          label: string;
+          url?: string | null;
+          note?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          project_id?: string | null;
+          label?: string;
+          url?: string | null;
+          note?: string | null;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
@@ -213,3 +243,4 @@ export type ReportRow = Database["public"]["Tables"]["reports"]["Row"];
 export type BillingEventRow = Database["public"]["Tables"]["billing_events"]["Row"];
 export type ResearchRunRow = Database["public"]["Tables"]["research_runs"]["Row"];
 export type AnalysisRow = Database["public"]["Tables"]["analyses"]["Row"];
+export type WatchlistItemRow = Database["public"]["Tables"]["watchlist_items"]["Row"];
