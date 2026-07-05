@@ -84,6 +84,10 @@ create table if not exists public.notifications (
   created_at timestamptz default now()
 );
 
+-- Public share token for read-only report links (looked up server-side only).
+alter table public.reports add column if not exists share_token text;
+create unique index if not exists reports_share_token_key on public.reports (share_token);
+
 alter table public.profiles enable row level security;
 alter table public.projects enable row level security;
 alter table public.reports enable row level security;

@@ -82,6 +82,7 @@ export interface Database {
           project_id: string | null;
           title: string;
           content: Json;
+          share_token: string | null;
           created_at: string;
         };
         Insert: {
@@ -90,6 +91,7 @@ export interface Database {
           project_id?: string | null;
           title: string;
           content?: Json;
+          share_token?: string | null;
           created_at?: string;
         };
         Update: {
@@ -98,6 +100,7 @@ export interface Database {
           project_id?: string | null;
           title?: string;
           content?: Json;
+          share_token?: string | null;
           created_at?: string;
         };
         Relationships: [];

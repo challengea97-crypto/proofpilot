@@ -97,6 +97,21 @@ export function reportIsEnriched(report: FounderReport): boolean {
   return report.sections.length > 1;
 }
 
+/** Validate stored JSON as a FounderReport (used by saved + shared report pages). */
+export function parseFounderReport(content: unknown): FounderReport | null {
+  if (
+    content &&
+    typeof content === "object" &&
+    !Array.isArray(content) &&
+    "title" in content &&
+    "sections" in content &&
+    Array.isArray((content as { sections: unknown }).sections)
+  ) {
+    return content as unknown as FounderReport;
+  }
+  return null;
+}
+
 /** Render the report as portable Markdown for download. */
 export function reportToMarkdown(report: FounderReport): string {
   const lines: string[] = [`# ${report.title}`, "", `_${report.subtitle}_`, ""];
