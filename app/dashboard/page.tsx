@@ -1,120 +1,117 @@
-"use client";
+import Link from "next/link";
+import { FolderKanban, Plus, Sparkles, CalendarDays, ArrowRight } from "lucide-react";
+import { requireUser, getProfile } from "@/lib/auth";
+import { listProjects } from "@/lib/data/projects";
+import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { ProjectCard } from "@/components/projects/ProjectCard";
+import { planLabel } from "@/lib/pricing";
+import { formatDate } from "@/lib/utils";
 
-import { generateLocalReport } from "@/lib/report";
-import { PricingCards } from "@/components/PricingCards";
-import { FileText, Gauge, Search, Target, Rocket } from "lucide-react";
-import { useMemo, useState } from "react";
+export const dynamic = "force-dynamic";
 
-const tabs = ["Research", "Competitors", "Reviews", "Strategy", "Reports", "Billing"] as const;
-type Tab = typeof tabs[number];
+export const metadata = {
+  title: "Overview",
+};
 
-export default function DashboardPage() {
-  const [tab, setTab] = useState<Tab>("Research");
-  const [brief, setBrief] = useState({
-    idea: "AI product validation platform for indie founders",
-    audience: "solo founders and startup teams",
-    problem: "founders build before validating competitors, demand, pricing, and real user pain"
-  });
-  const report = useMemo(() => generateLocalReport(brief), [brief]);
-
+function Stat({
+  label,
+  value,
+  icon,
+}: {
+  label: string;
+  value: React.ReactNode;
+  icon: React.ReactNode;
+}) {
   return (
-    <main className="min-h-screen bg-neutral-950">
-      <section className="mx-auto max-w-7xl px-6 py-8">
-        <div className="flex flex-col gap-4 rounded-3xl border border-neutral-800 bg-neutral-950 p-5 md:flex-row md:items-center md:justify-between">
-          <div>
-            <h1 className="text-3xl font-black">ProofPilot Dashboard</h1>
-            <p className="text-neutral-400">Owned production starter for Netlify + Supabase + Stripe.</p>
-          </div>
-          <a href="/" className="btn-secondary">Back home</a>
-        </div>
-
-        <div className="mt-6 flex gap-2 overflow-x-auto rounded-3xl border border-neutral-800 bg-neutral-900/60 p-3">
-          {tabs.map((item) => (
-            <button
-              key={item}
-              onClick={() => setTab(item)}
-              className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-bold ${tab === item ? "bg-white text-neutral-950" : "bg-neutral-950 text-neutral-400"}`}
-            >
-              {item}
-            </button>
-          ))}
-        </div>
-
-        <div className="mt-6 grid gap-4 md:grid-cols-4">
-          <Metric label="Score" value={`${report.score}/100`} icon={<Gauge size={18} />} />
-          <Metric label="Confidence" value={`${report.confidence}%`} icon={<Target size={18} />} />
-          <Metric label="Competitors" value="4" icon={<Search size={18} />} />
-          <Metric label="Report" value="Ready" icon={<FileText size={18} />} />
-        </div>
-
-        <section className="mt-6">
-          {tab === "Research" && (
-            <div className="grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
-              <div className="card">
-                <h2 className="text-xl font-black">Research brief</h2>
-                <input className="input mt-4" value={brief.idea} onChange={(e) => setBrief({ ...brief, idea: e.target.value })} />
-                <input className="input mt-3" value={brief.audience} onChange={(e) => setBrief({ ...brief, audience: e.target.value })} />
-                <textarea className="input mt-3 min-h-32" value={brief.problem} onChange={(e) => setBrief({ ...brief, problem: e.target.value })} />
-              </div>
-              <div className="card">
-                <h2 className="text-xl font-black">Reality check</h2>
-                <p className="mt-4 leading-7 text-neutral-300">{report.summary}</p>
-                <div className="mt-5 space-y-3">
-                  {report.nextActions.map((item) => <div key={item} className="rounded-2xl bg-neutral-900 p-4 text-neutral-300">{item}</div>)}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {tab === "Competitors" && <Panel title="Competitor Database" items={report.competitors} />}
-          {tab === "Reviews" && <Panel title="Review Intelligence" items={["Pricing complaints", "Onboarding friction", "Missing source transparency", "Feature request clustering"]} />}
-          {tab === "Strategy" && <Panel title="AI Strategy Builder" items={["Positioning", "USP", "MVP roadmap", "Pricing recommendation", "GTM plan", "30-day launch plan"]} />}
-          {tab === "Reports" && (
-            <div className="card">
-              <h2 className="text-xl font-black">Founder report export</h2>
-              <pre className="mt-4 max-h-[500px] overflow-auto rounded-2xl bg-neutral-900 p-4 text-sm text-neutral-300">
-{`# ProofPilot Founder Report
-
-Idea: ${brief.idea}
-
-Score: ${report.score}/100
-Confidence: ${report.confidence}%
-
-Summary:
-${report.summary}
-
-Next actions:
-${report.nextActions.map(x => `- ${x}`).join("\n")}
-`}
-              </pre>
-            </div>
-          )}
-          {tab === "Billing" && <PricingCards />}
-        </section>
-      </section>
-    </main>
-  );
-}
-
-function Metric({ label, value, icon }: { label: string; value: string; icon: React.ReactNode }) {
-  return (
-    <div className="card">
-      <div className="mb-4 flex items-center justify-between text-neutral-400">
+    <div className="rounded-3xl border border-neutral-800/80 bg-neutral-950/60 p-5">
+      <div className="mb-3 flex items-center justify-between text-neutral-400">
         <span className="text-sm">{label}</span>
         {icon}
       </div>
-      <p className="text-3xl font-black">{value}</p>
+      <div className="text-2xl font-black text-white">{value}</div>
     </div>
   );
 }
 
-function Panel({ title, items }: { title: string; items: string[] }) {
+export default async function DashboardOverview() {
+  const user = await requireUser();
+  const [projects, profile] = await Promise.all([listProjects(user.id), getProfile(user)]);
+  const recent = projects.slice(0, 4);
+
   return (
-    <div className="card">
-      <h2 className="text-xl font-black">{title}</h2>
-      <div className="mt-5 grid gap-3 md:grid-cols-2">
-        {items.map((item) => <div key={item} className="rounded-2xl border border-neutral-800 bg-neutral-900 p-4 text-neutral-300">{item}</div>)}
+    <div className="space-y-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-black sm:text-3xl">Overview</h1>
+          <p className="mt-1 text-neutral-400">Welcome back — pick up your validation work.</p>
+        </div>
+        <Link href="/dashboard/projects">
+          <Button>
+            <Plus className="h-4 w-4" aria-hidden />
+            New project
+          </Button>
+        </Link>
       </div>
+
+      <div className="grid gap-4 sm:grid-cols-3">
+        <Stat
+          label="Projects"
+          value={projects.length}
+          icon={<FolderKanban className="h-5 w-5" aria-hidden />}
+        />
+        <Stat
+          label="Plan"
+          value={<Badge tone={profile?.plan && profile.plan !== "free" ? "accent" : "neutral"}>{planLabel(profile?.plan)}</Badge>}
+          icon={<Sparkles className="h-5 w-5" aria-hidden />}
+        />
+        <Stat
+          label="Member since"
+          value={
+            <span className="text-base font-semibold">
+              {profile ? formatDate(profile.created_at) : "—"}
+            </span>
+          }
+          icon={<CalendarDays className="h-5 w-5" aria-hidden />}
+        />
+      </div>
+
+      <section className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-bold">Recent projects</h2>
+          {projects.length > 0 && (
+            <Link
+              href="/dashboard/projects"
+              className="inline-flex items-center gap-1 text-sm text-neutral-400 hover:text-white"
+            >
+              View all <ArrowRight className="h-4 w-4" aria-hidden />
+            </Link>
+          )}
+        </div>
+
+        {recent.length === 0 ? (
+          <EmptyState
+            icon={FolderKanban}
+            title="No projects yet"
+            description="Create your first project to start validating an idea with competitor, demand and pricing evidence."
+            action={
+              <Link href="/dashboard/projects">
+                <Button>
+                  <Plus className="h-4 w-4" aria-hidden />
+                  Create a project
+                </Button>
+              </Link>
+            }
+          />
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-2">
+            {recent.map((project) => (
+              <ProjectCard key={project.id} project={project} />
+            ))}
+          </div>
+        )}
+      </section>
     </div>
   );
 }

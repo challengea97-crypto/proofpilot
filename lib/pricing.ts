@@ -29,3 +29,15 @@ export const PLANS = [
     description: "Client-ready reports, unlimited projects, exports, and workspaces."
   }
 ] as const;
+
+/** Human-readable labels for every plan tier (including the default `free`). */
+export const PLAN_LABELS: Record<string, string> = {
+  free: "Free",
+  founderReport: "Founder Report",
+  radar: "Radar",
+  consultant: "Consultant",
+};
+
+export function planLabel(plan: string | null | undefined): string {
+  return (plan && PLAN_LABELS[plan]) || "Free";
+}

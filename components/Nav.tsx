@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ShieldCheck } from "lucide-react";
+import { buttonVariants } from "@/components/ui/Button";
 
 export function Nav() {
   return (
@@ -9,13 +10,23 @@ export function Nav() {
           <ShieldCheck size={22} />
         </span>
         <span>
-          <span className="block text-xl font-black">ProofPilot</span>
-          <span className="block text-xs text-neutral-400">Proof before build</span>
+          <span className="block text-xl font-black leading-none">ProofPilot</span>
+          <span className="mt-1 block text-xs text-neutral-400">Proof before build</span>
         </span>
       </Link>
-      <div className="flex items-center gap-3">
-        <Link href="/pricing" className="btn-secondary">Pricing</Link>
-        <Link href="/dashboard" className="btn-primary">Open app</Link>
+      <div className="flex items-center gap-2 sm:gap-3">
+        <Link
+          href="/pricing"
+          className={`${buttonVariants({ variant: "ghost", size: "sm" })} hidden sm:inline-flex`}
+        >
+          Pricing
+        </Link>
+        <Link href="/login" className={buttonVariants({ variant: "secondary", size: "sm" })}>
+          Sign in
+        </Link>
+        <Link href="/dashboard" className={buttonVariants({ variant: "primary", size: "sm" })}>
+          Open app
+        </Link>
       </div>
     </nav>
   );

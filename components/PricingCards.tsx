@@ -1,7 +1,10 @@
 "use client";
 
-import { PLANS, type PlanKey } from "@/lib/pricing";
 import { useState } from "react";
+import { PLANS, type PlanKey } from "@/lib/pricing";
+import { Button } from "@/components/ui/Button";
+import { Alert } from "@/components/ui/Alert";
+import { cn } from "@/lib/utils";
 
 export function PricingCards() {
   const [loading, setLoading] = useState<PlanKey | null>(null);
@@ -14,7 +17,7 @@ export function PricingCards() {
       const response = await fetch("/api/stripe/checkout", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ plan })
+        body: JSON.stringify({ plan }),
       });
 
       const data = await response.json();
@@ -29,23 +32,46 @@ export function PricingCards() {
   }
 
   return (
-    <section className="grid gap-5 md:grid-cols-3">
-      {PLANS.map((plan) => (
-        <article key={plan.key} className="card">
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-neutral-500">{plan.cadence}</p>
-          <h3 className="mt-3 text-2xl font-black">{plan.name}</h3>
-          <p className="mt-2 text-4xl font-black">{plan.price}</p>
-          <p className="mt-4 min-h-20 text-neutral-300">{plan.description}</p>
-          <button
-            onClick={() => checkout(plan.key)}
-            disabled={loading === plan.key}
-            className="mt-6 w-full btn-primary disabled:opacity-60"
-          >
-            {loading === plan.key ? "Opening checkout..." : "Buy now"}
-          </button>
-        </article>
-      ))}
-      {error && <p className="md:col-span-3 rounded-2xl border border-red-900 bg-red-950/40 p-4 text-red-200">{error}</p>}
-    </section>
+    <div className="space-y-5">
+      <div className="grid gap-5 md:grid-cols-3">
+        {PLANS.map((plan) => {
+          const featured = plan.key === "radar";
+          return (
+            <article
+              key={plan.key}
+              className={cn(
+                "flex flex-col rounded-3xl border p-6",
+                featured
+                  ? "border-white/20 bg-neutral-900/70 shadow-glow"
+                  : "border-neutral-800/80 bg-neutral-950/60"
+              )}
+            >
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-bold uppercase tracking-[0.2em] text-neutral-500">
+                  {plan.cadence}
+                </p>
+                {featured && (
+                  <span className="rounded-full bg-white px-2.5 py-0.5 text-xs font-bold text-neutral-950">
+                    Popular
+                  </span>
+                )}
+              </div>
+              <h3 className="mt-3 text-2xl font-black">{plan.name}</h3>
+              <p className="mt-2 text-4xl font-black">{plan.price}</p>
+              <p className="mt-4 min-h-16 text-sm text-neutral-400">{plan.description}</p>
+              <Button
+                onClick={() => checkout(plan.key)}
+                loading={loading === plan.key}
+                variant={featured ? "primary" : "secondary"}
+                className="mt-6 w-full"
+              >
+                {loading === plan.key ? "Opening checkout…" : "Buy now"}
+              </Button>
+            </article>
+          );
+        })}
+      </div>
+      {error && <Alert tone="error">{error}</Alert>}
+    </div>
   );
 }
