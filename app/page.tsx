@@ -8,6 +8,11 @@ import {
   LayoutTemplate,
   DollarSign,
   ShieldCheck,
+  Check,
+  Minus,
+  User,
+  Briefcase,
+  Users,
 } from "lucide-react";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
@@ -52,6 +57,55 @@ const STEPS = [
   { n: "01", title: "Describe your idea", body: "Add the idea, audience and the problem you remove." },
   { n: "02", title: "Run the analysis", body: "Competitors, demand, reviews and pricing, gathered and scored." },
   { n: "03", title: "Get a founder report", body: "A source-aware plan you can act on — or share with your team." },
+];
+
+const STATS = [
+  "7 AI modules",
+  "First report in about a minute",
+  "Markdown & PDF export",
+  "Cancel anytime",
+];
+
+const USE_CASES = [
+  {
+    icon: User,
+    title: "Solo founders",
+    body: "Pressure-test your idea before you spend months — or your savings — building it.",
+  },
+  {
+    icon: Briefcase,
+    title: "Agencies & consultants",
+    body: "Turn client discovery into structured validation reports you can share in a link.",
+  },
+  {
+    icon: Users,
+    title: "Product teams",
+    body: "Score new market and feature bets with a repeatable framework before roadmap fights.",
+  },
+];
+
+const VS_ROWS: [string, boolean][] = [
+  ["Structured validation framework (score, SWOT, strategy, MVP, pricing)", false],
+  ["Saved projects with run history", false],
+  ["One-click founder report with PDF export", false],
+  ["Shareable read-only report links", false],
+  ["Watchlist monitoring with alerts", false],
+  ["Answers your questions conversationally", true],
+];
+
+const FAQ_TEASER: [string, string][] = [
+  [
+    "Is the AI real, or is this a demo?",
+    "It's real. Every research run and analysis is generated live by an AI model and validated before it's saved. There is no mock output.",
+  ],
+  [
+    "Is there a free plan?",
+    "Yes — start free with up to 3 projects, full AI research and analyses, and founder reports.",
+  ],
+  [
+    "Can I export and share reports?",
+    "Every report exports to Markdown or PDF, and paid plans can share a private read-only link.",
+  ],
 ];
 
 export default function HomePage() {
@@ -112,6 +166,17 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Stats strip */}
+      <section className="mx-auto max-w-7xl px-6 pb-10">
+        <div className="grid gap-3 rounded-3xl border border-neutral-800/80 bg-neutral-950/60 p-6 text-center sm:grid-cols-4">
+          {STATS.map((stat) => (
+            <p key={stat} className="text-sm font-semibold text-neutral-300">
+              {stat}
+            </p>
+          ))}
+        </div>
+      </section>
+
       {/* Product preview */}
       <section className="mx-auto max-w-7xl px-6 pb-6">
         <Reveal>
@@ -141,6 +206,22 @@ export default function HomePage() {
         </Reveal>
       </section>
 
+      {/* Use cases */}
+      <section className="mx-auto max-w-7xl px-6 py-12">
+        <h2 className="text-3xl font-black sm:text-4xl">Built for the way you work</h2>
+        <Reveal className="mt-8 grid gap-4 md:grid-cols-3">
+          {USE_CASES.map(({ icon: Icon, title, body }) => (
+            <div key={title} className="rounded-3xl border border-neutral-800/80 bg-neutral-950/60 p-6">
+              <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-neutral-900 text-white">
+                <Icon className="h-5 w-5" aria-hidden />
+              </div>
+              <h3 className="font-bold text-white">{title}</h3>
+              <p className="mt-2 text-sm text-neutral-400">{body}</p>
+            </div>
+          ))}
+        </Reveal>
+      </section>
+
       {/* How it works */}
       <section className="mx-auto max-w-7xl px-6 py-12">
         <h2 className="text-3xl font-black sm:text-4xl">How it works</h2>
@@ -153,6 +234,64 @@ export default function HomePage() {
             </div>
           ))}
         </Reveal>
+      </section>
+
+      {/* Why not just chat? */}
+      <section className="mx-auto max-w-7xl px-6 py-12">
+        <h2 className="text-3xl font-black sm:text-4xl">“Can’t I just ask an AI chatbot?”</h2>
+        <p className="mt-3 max-w-2xl text-neutral-400">
+          You can — and you’ll get a wall of text that disappears. Teckro turns the same AI power
+          into a structured, saved, exportable validation system.
+        </p>
+        <Reveal className="mt-8 overflow-x-auto rounded-3xl border border-neutral-800">
+          <table className="w-full min-w-[560px] border-collapse text-left">
+            <thead>
+              <tr className="border-b border-neutral-800 bg-neutral-950/60">
+                <th scope="col" className="p-4 text-sm font-bold text-neutral-300">Capability</th>
+                <th scope="col" className="p-4 text-center text-sm font-bold text-white">Generic AI chat</th>
+                <th scope="col" className="p-4 text-center text-sm font-bold text-white">Teckro</th>
+              </tr>
+            </thead>
+            <tbody>
+              {VS_ROWS.map(([capability, chatHasIt], i) => (
+                <tr key={capability} className={i % 2 === 1 ? "bg-neutral-950/30" : undefined}>
+                  <th scope="row" className="p-4 text-left text-sm font-medium text-neutral-300">
+                    {capability}
+                  </th>
+                  <td className="p-4 text-center">
+                    {chatHasIt ? (
+                      <Check className="mx-auto h-5 w-5 text-emerald-400" aria-label="Yes" />
+                    ) : (
+                      <Minus className="mx-auto h-4 w-4 text-neutral-700" aria-label="No" />
+                    )}
+                  </td>
+                  <td className="p-4 text-center">
+                    <Check className="mx-auto h-5 w-5 text-emerald-400" aria-label="Yes" />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </Reveal>
+      </section>
+
+      {/* FAQ teaser */}
+      <section className="mx-auto max-w-7xl px-6 py-12">
+        <h2 className="text-3xl font-black sm:text-4xl">Common questions</h2>
+        <div className="mt-8 grid gap-3 md:grid-cols-3">
+          {FAQ_TEASER.map(([q, a]) => (
+            <div key={q} className="rounded-3xl border border-neutral-800/80 bg-neutral-950/60 p-6">
+              <h3 className="font-bold text-white">{q}</h3>
+              <p className="mt-2 text-sm leading-6 text-neutral-400">{a}</p>
+            </div>
+          ))}
+        </div>
+        <Link
+          href="/faq"
+          className="mt-6 inline-flex items-center gap-1 text-sm text-neutral-400 hover:text-white"
+        >
+          See all FAQs <ArrowRight className="h-4 w-4" aria-hidden />
+        </Link>
       </section>
 
       {/* CTA */}

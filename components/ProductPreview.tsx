@@ -1,6 +1,6 @@
 import { Gauge, Target, ArrowUpRight, ListChecks } from "lucide-react";
 
-const TABS = ["Overview", "Research", "Strategy", "MVP", "Pricing", "Report"];
+const TABS = ["Overview", "Research", "SWOT", "Strategy", "MVP", "Pricing", "Report"];
 
 const COMPETITORS: [string, string][] = [
   ["Direct validators", "direct"],

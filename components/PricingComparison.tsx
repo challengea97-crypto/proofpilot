@@ -7,7 +7,7 @@ type Cell = boolean | string;
 const ROWS: { feature: string; cells: [Cell, Cell, Cell, Cell] }[] = [
   { feature: "Projects", cells: ["3", "Unlimited", "Unlimited", "Unlimited"] },
   { feature: "Live AI Research", cells: [true, true, true, true] },
-  { feature: "Strategy · MVP · Pricing · Landing", cells: [true, true, true, true] },
+  { feature: "SWOT · Strategy · MVP · Pricing · Landing", cells: [true, true, true, true] },
   { feature: "Founder report + Markdown / PDF export", cells: [true, true, true, true] },
   { feature: "Saved reports", cells: [true, true, true, true] },
   { feature: "Public share links", cells: [false, true, true, true] },

@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { requireUser } from "@/lib/auth";
 import { getProject } from "@/lib/data/projects";
-import { getLatestResearch } from "@/lib/data/research";
+import { getLatestResearch, listResearchScores } from "@/lib/data/research";
 import { getLatestAnalyses } from "@/lib/data/analyses";
 import { listWatchItems } from "@/lib/data/watchlist";
 import { isAIConfigured } from "@/lib/env";
@@ -37,8 +37,11 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
     research = null;
   }
 
-  const analyses = await getLatestAnalyses(user.id, project.id);
-  const watchItems = await listWatchItems(user.id, project.id);
+  const [analyses, watchItems, researchHistory] = await Promise.all([
+    getLatestAnalyses(user.id, project.id),
+    listWatchItems(user.id, project.id),
+    listResearchScores(user.id, project.id),
+  ]);
   const report = buildFounderReport(
     { name: project.name, idea: project.idea, audience: project.audience, problem: project.problem },
     research,
@@ -66,6 +69,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
       <ProjectWorkspace
         project={project}
         research={research}
+        researchHistory={researchHistory}
         analyses={analyses}
         report={report}
         watchItems={watchItems}

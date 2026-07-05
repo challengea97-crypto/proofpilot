@@ -17,7 +17,7 @@ const FAQS: { q: string; a: string }[] = [
   },
   {
     q: "How does validation work?",
-    a: "Create a project with your idea, audience and problem. Run Live AI Research for an opportunity score and competitor map, then generate the Strategy, MVP, Pricing and Landing modules. Finally, assemble a founder report and export or share it.",
+    a: "Create a project with your idea, audience and problem. Run Live AI Research for an opportunity score, verdict and competitor map, then generate the SWOT, Strategy, MVP, Pricing and Landing modules. Finally, assemble a founder report and export or share it.",
   },
   {
     q: "Is there a free plan?",

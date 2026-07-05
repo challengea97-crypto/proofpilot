@@ -8,6 +8,7 @@ import { Alert } from "@/components/ui/Alert";
 import { Badge } from "@/components/ui/Badge";
 import { Spinner } from "@/components/ui/Spinner";
 import { playChime } from "@/lib/sound";
+import { timeAgo } from "@/lib/utils";
 import type { ResearchResult, Competitor } from "@/lib/ai/research-schema";
 
 const CATEGORY_TONE: Record<Competitor["category"], "accent" | "warning" | "neutral"> = {
@@ -15,6 +16,15 @@ const CATEGORY_TONE: Record<Competitor["category"], "accent" | "warning" | "neut
   indirect: "neutral",
   substitute: "accent",
 };
+
+export type ResearchHistoryEntry = { score: number; createdAt: string };
+
+/** Deterministic verdict derived from the opportunity score. */
+function verdictFor(score: number): { label: string; tone: "accent" | "warning" | "danger" } {
+  if (score >= 70) return { label: "Promising — worth pursuing", tone: "accent" };
+  if (score >= 50) return { label: "Possible — sharpen the wedge", tone: "warning" };
+  return { label: "High risk — rethink the angle", tone: "danger" };
+}
 
 function List({ icon: Icon, title, items }: { icon: typeof Users; title: string; items: string[] }) {
   if (items.length === 0) return null;
@@ -36,8 +46,14 @@ function List({ icon: Icon, title, items }: { icon: typeof Users; title: string;
 }
 
 function ResearchResultView({ result }: { result: ResearchResult }) {
+  const verdict = verdictFor(result.opportunityScore);
   return (
     <div className="space-y-6">
+      <div className="flex items-center gap-3 rounded-2xl border border-neutral-800 bg-neutral-900/60 p-4">
+        <span className="text-sm text-neutral-400">Verdict</span>
+        <Badge tone={verdict.tone}>{verdict.label}</Badge>
+      </div>
+
       <div className="grid grid-cols-2 gap-3">
         <div className="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-4">
           <div className="mb-2 flex items-center gap-2 text-neutral-400">
@@ -93,10 +109,12 @@ function ResearchResultView({ result }: { result: ResearchResult }) {
 export function ResearchPanel({
   projectId,
   latest,
+  history = [],
   configured,
 }: {
   projectId: string;
   latest: ResearchResult | null;
+  history?: ResearchHistoryEntry[];
   configured: boolean;
 }) {
   const [pending, startTransition] = useTransition();
@@ -146,6 +164,23 @@ export function ResearchPanel({
         {!pending && latest && <ResearchResultView result={latest} />}
         {!pending && !latest && configured && !error && (
           <p className="text-sm text-neutral-500">No research run yet. Click “Run research”.</p>
+        )}
+
+        {!pending && history.length > 1 && (
+          <div className="mt-6">
+            <p className="mb-2 text-sm font-semibold text-neutral-300">Run history</p>
+            <div className="no-scrollbar flex gap-2 overflow-x-auto">
+              {history.map((run, i) => (
+                <span
+                  key={`${run.createdAt}-${i}`}
+                  className="whitespace-nowrap rounded-full border border-neutral-800 bg-neutral-900/60 px-3 py-1.5 text-xs text-neutral-400"
+                >
+                  <span className="font-bold text-white">{run.score}</span>/100 ·{" "}
+                  {timeAgo(run.createdAt)}
+                </span>
+              ))}
+            </div>
+          </div>
         )}
       </div>
     </section>

@@ -120,6 +120,12 @@ export function AppShell({
 
   return (
     <div className="min-h-screen bg-ink lg:grid lg:grid-cols-[264px_1fr]">
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-neutral-950"
+      >
+        Skip to content
+      </a>
       {/* Desktop sidebar */}
       <aside className="sticky top-0 hidden h-screen flex-col border-r border-neutral-800 bg-neutral-950/40 lg:flex no-print">
         <div className="p-4">{brand}</div>
@@ -168,7 +174,7 @@ export function AppShell({
           <span className="text-base font-black">Teckro</span>
         </header>
 
-        <main className="mx-auto w-full max-w-6xl flex-1 animate-fade-in px-4 py-8 sm:px-6 lg:px-10">
+        <main id="main" className="mx-auto w-full max-w-6xl flex-1 animate-fade-in px-4 py-8 sm:px-6 lg:px-10">
           {children}
         </main>
       </div>

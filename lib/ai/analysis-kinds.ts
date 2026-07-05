@@ -41,7 +41,7 @@ export const ANALYSIS_TOOL_SCHEMA = {
   additionalProperties: false,
 };
 
-export const ANALYSIS_KINDS = ["strategy", "mvp", "pricing", "landing"] as const;
+export const ANALYSIS_KINDS = ["swot", "strategy", "mvp", "pricing", "landing"] as const;
 export type AnalysisKind = (typeof ANALYSIS_KINDS)[number];
 
 export function isAnalysisKind(value: string): value is AnalysisKind {
@@ -52,6 +52,12 @@ export const ANALYSIS_CONFIG: Record<
   AnalysisKind,
   { title: string; description: string; instruction: string }
 > = {
+  swot: {
+    title: "SWOT",
+    description: "Strengths, weaknesses, opportunities and threats — the classic lens.",
+    instruction:
+      "Produce a rigorous SWOT analysis of this idea. Use sections titled exactly: Strengths, Weaknesses, Opportunities, Threats. 3-5 items per section, each specific to THIS idea and market — no generic filler.",
+  },
   strategy: {
     title: "AI Strategy",
     description: "Positioning, USP, go-to-market and a 30-day launch plan.",

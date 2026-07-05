@@ -1,9 +1,7 @@
-import { FolderKanban } from "lucide-react";
 import { requireUser } from "@/lib/auth";
 import { listProjects } from "@/lib/data/projects";
 import { NewProjectForm } from "@/components/projects/NewProjectForm";
-import { ProjectCard } from "@/components/projects/ProjectCard";
-import { EmptyState } from "@/components/ui/EmptyState";
+import { ProjectsExplorer } from "@/components/projects/ProjectsExplorer";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
 
 export const dynamic = "force-dynamic";
@@ -27,19 +25,7 @@ export default async function ProjectsPage() {
 
       <div className="grid gap-8 lg:grid-cols-[1fr_minmax(320px,360px)]">
         <section className="order-2 space-y-4 lg:order-1">
-          {projects.length === 0 ? (
-            <EmptyState
-              icon={FolderKanban}
-              title="No projects yet"
-              description="Use the form to create your first project. You can add as many ideas as you like."
-            />
-          ) : (
-            <div className="grid gap-4 sm:grid-cols-2">
-              {projects.map((project) => (
-                <ProjectCard key={project.id} project={project} />
-              ))}
-            </div>
-          )}
+          <ProjectsExplorer projects={projects} />
         </section>
 
         <aside className="order-1 lg:order-2">

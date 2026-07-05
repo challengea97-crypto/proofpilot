@@ -56,7 +56,7 @@ function Overview({ project }: { project: ProjectRow }) {
 
       <div className="space-y-4 rounded-2xl border border-neutral-800 bg-neutral-900/40 p-5">
         <div className="flex items-center justify-between">
-          <h3 className="font-bold">Heuristic snapshot</h3>
+          <h3 className="font-bold">Instant snapshot</h3>
           <Badge tone="neutral">Local · non-AI</Badge>
         </div>
         <div className="grid grid-cols-2 gap-3">
@@ -97,6 +97,7 @@ function Overview({ project }: { project: ProjectRow }) {
 export function ProjectWorkspace({
   project,
   research,
+  researchHistory = [],
   analyses,
   report,
   watchItems,
@@ -104,6 +105,7 @@ export function ProjectWorkspace({
 }: {
   project: ProjectRow;
   research: ResearchResult | null;
+  researchHistory?: { score: number; createdAt: string }[];
   analyses: Record<AnalysisKind, AnalysisResult | null>;
   report: FounderReport;
   watchItems: WatchlistItemRow[];
@@ -146,7 +148,12 @@ export function ProjectWorkspace({
       <div className="rounded-3xl border border-neutral-800/80 bg-neutral-950/60 p-6 shadow-glow">
         {tab === "overview" && <Overview project={project} />}
         {tab === "research" && (
-          <ResearchPanel projectId={project.id} latest={research} configured={configured} />
+          <ResearchPanel
+            projectId={project.id}
+            latest={research}
+            history={researchHistory}
+            configured={configured}
+          />
         )}
         {tab === "watchlist" && <WatchlistPanel projectId={project.id} items={watchItems} />}
         {tab === "report" && <ReportPanel projectId={project.id} report={report} />}
