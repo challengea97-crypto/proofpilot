@@ -8,13 +8,13 @@ import { z } from "zod";
  */
 
 export const AnalysisSectionSchema = z.object({
-  title: z.string(),
-  items: z.array(z.string()),
+  title: z.string().catch(""),
+  items: z.array(z.string()).catch([]),
 });
 
 export const AnalysisResultSchema = z.object({
-  headline: z.string(),
-  sections: z.array(AnalysisSectionSchema),
+  headline: z.string().catch(""),
+  sections: z.array(AnalysisSectionSchema).catch([]),
 });
 
 export type AnalysisSection = z.infer<typeof AnalysisSectionSchema>;

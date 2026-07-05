@@ -7,22 +7,24 @@ import { z } from "zod";
  */
 
 export const CompetitorSchema = z.object({
-  name: z.string(),
-  category: z.enum(["direct", "indirect", "substitute"]),
-  positioning: z.string(),
-  pricingSignal: z.string(),
+  name: z.string().catch(""),
+  category: z.enum(["direct", "indirect", "substitute"]).catch("direct"),
+  positioning: z.string().catch(""),
+  pricingSignal: z.string().catch(""),
 });
 
+// `.catch(...)` keeps parsing resilient to small model deviations rather than
+// hard-failing the whole run.
 export const ResearchResultSchema = z.object({
-  opportunityScore: z.number().min(0).max(100),
-  confidence: z.number().min(0).max(100),
-  summary: z.string(),
-  competitors: z.array(CompetitorSchema),
-  demandSignals: z.array(z.string()),
-  reviewComplaints: z.array(z.string()),
-  differentiators: z.array(z.string()),
-  risks: z.array(z.string()),
-  nextActions: z.array(z.string()),
+  opportunityScore: z.number().min(0).max(100).catch(60),
+  confidence: z.number().min(0).max(100).catch(55),
+  summary: z.string().catch(""),
+  competitors: z.array(CompetitorSchema).catch([]),
+  demandSignals: z.array(z.string()).catch([]),
+  reviewComplaints: z.array(z.string()).catch([]),
+  differentiators: z.array(z.string()).catch([]),
+  risks: z.array(z.string()).catch([]),
+  nextActions: z.array(z.string()).catch([]),
 });
 
 export type Competitor = z.infer<typeof CompetitorSchema>;

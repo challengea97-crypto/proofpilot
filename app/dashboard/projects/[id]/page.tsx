@@ -6,7 +6,7 @@ import { getProject } from "@/lib/data/projects";
 import { getLatestResearch } from "@/lib/data/research";
 import { getLatestAnalyses } from "@/lib/data/analyses";
 import { listWatchItems } from "@/lib/data/watchlist";
-import { isAnthropicConfigured } from "@/lib/env";
+import { isAIConfigured } from "@/lib/env";
 import { ResearchResultSchema, type ResearchResult } from "@/lib/ai/research-schema";
 import { buildFounderReport } from "@/lib/reports/build";
 import { ProjectWorkspace } from "@/components/projects/ProjectWorkspace";
@@ -25,7 +25,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   const project = await getProject(user.id, id);
   if (!project) notFound();
 
-  const configured = isAnthropicConfigured();
+  const configured = isAIConfigured();
 
   // Latest AI research (resilient if the research_runs table isn't migrated yet).
   let research: ResearchResult | null = null;

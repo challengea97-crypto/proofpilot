@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { requireUser } from "@/lib/auth";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { getProject } from "@/lib/data/projects";
-import { isAnthropicConfigured, getAnthropicModel } from "@/lib/env";
+import { isAIConfigured, getGroqModel } from "@/lib/env";
 import { runAnalysis } from "@/lib/ai/analysis";
 import { isAnalysisKind, ANALYSIS_CONFIG, type AnalysisResult } from "@/lib/ai/analysis-kinds";
 import { insertNotification } from "@/lib/notifications";
@@ -20,8 +20,8 @@ export async function runAnalysisAction(
   const user = await requireUser();
 
   if (!isAnalysisKind(kind)) return { error: "Unknown analysis type." };
-  if (!isAnthropicConfigured()) {
-    return { error: "AI is not configured. Set ANTHROPIC_API_KEY (see docs/SETUP.md)." };
+  if (!isAIConfigured()) {
+    return { error: "AI is temporarily unavailable. Please try again shortly." };
   }
 
   const project = await getProject(user.id, projectId);
@@ -43,7 +43,7 @@ export async function runAnalysisAction(
     user_id: user.id,
     project_id: projectId,
     kind,
-    model: getAnthropicModel(),
+    model: getGroqModel(),
     result: result as unknown as Json,
   });
   if (error) return { error: error.message };

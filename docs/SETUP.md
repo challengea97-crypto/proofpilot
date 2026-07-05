@@ -22,7 +22,7 @@ After changing variables in Netlify, trigger a redeploy (variables prefixed
 | `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Billing (client) | Stripe → Developers → API keys → Publishable key |
 | `STRIPE_SECRET_KEY` | Billing (server) | Stripe → Developers → API keys → Secret key (**secret**) |
 | `STRIPE_WEBHOOK_SECRET` | Billing webhook | Stripe → Developers → Webhooks → your endpoint → Signing secret |
-| `ANTHROPIC_API_KEY` | Live AI Research | Anthropic Console → API Keys (**secret**) |
+| `GROQ_API_KEY` | Live AI Research + analyses | Groq Console → API Keys (**secret**) |
 | `NEXT_PUBLIC_SITE_URL` | Redirects, links | Your live URL, e.g. `https://teckro.netlify.app` |
 
 ---
@@ -54,11 +54,13 @@ The three plan **price IDs are already in the code** (`lib/pricing.ts`):
      `invoice.payment_failed`
 3. Copy the endpoint's **Signing secret** into `STRIPE_WEBHOOK_SECRET`.
 
-## 3. Anthropic (Live AI Research — Phase 2)
+## 3. Groq (Live AI Research + analysis modules)
 
-1. Create an API key in the [Anthropic Console](https://console.anthropic.com).
-2. Set `ANTHROPIC_API_KEY`. Until it is set, research features render a
-   "setup needed" state rather than any placeholder output.
+Teckro's AI runs on [Groq](https://console.groq.com) (fast, OpenAI-compatible).
+
+1. Create an API key at [console.groq.com](https://console.groq.com).
+2. Set `GROQ_API_KEY` (and optionally `GROQ_MODEL`, default `llama-3.3-70b-versatile`).
+   This is the **only** key the AI features need — there is nothing to configure inside the app.
 
 ## 4. Netlify
 

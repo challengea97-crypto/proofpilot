@@ -39,23 +39,22 @@ export function isStripeConfigured(): boolean {
   return Boolean(process.env.STRIPE_SECRET_KEY);
 }
 
-export function isAnthropicConfigured(): boolean {
-  return Boolean(process.env.ANTHROPIC_API_KEY);
+/** AI is powered by Groq (OpenAI-compatible API). */
+export function isAIConfigured(): boolean {
+  return Boolean(process.env.GROQ_API_KEY);
 }
 
-export function getAnthropicApiKey(): string {
-  const key = process.env.ANTHROPIC_API_KEY;
+export function getGroqKey(): string {
+  const key = process.env.GROQ_API_KEY;
   if (!key) {
-    throw new Error(
-      "Live AI Research is not configured. Set ANTHROPIC_API_KEY (see docs/SETUP.md)."
-    );
+    throw new Error("AI is temporarily unavailable. (GROQ_API_KEY is not set on the server.)");
   }
   return key;
 }
 
-/** Model used for AI research; overridable so it can target whatever the key can access. */
-export function getAnthropicModel(): string {
-  return process.env.ANTHROPIC_MODEL || "claude-opus-4-8";
+/** Groq model used for AI features; overridable via GROQ_MODEL. */
+export function getGroqModel(): string {
+  return process.env.GROQ_MODEL || "llama-3.3-70b-versatile";
 }
 
 /** Absolute base URL of the deployment, used for Stripe redirects and links. */

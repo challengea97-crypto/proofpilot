@@ -74,9 +74,8 @@ export function AnalysisPanel({
       </div>
 
       {!configured && (
-        <Alert tone="info" title="AI not configured">
-          Set <span className="font-mono text-xs">ANTHROPIC_API_KEY</span> to enable this module
-          (docs/SETUP.md).
+        <Alert tone="info" title="AI temporarily unavailable">
+          This module will be back shortly — please try again in a moment.
         </Alert>
       )}
       {error && <Alert tone="error">{error}</Alert>}

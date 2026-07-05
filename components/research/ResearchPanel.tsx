@@ -126,9 +126,8 @@ export function ResearchPanel({
 
       <div className="mt-5">
         {!configured && (
-          <Alert tone="info" title="AI research not configured">
-            Set <span className="font-mono text-xs">ANTHROPIC_API_KEY</span> to enable Live AI
-            Research. See docs/SETUP.md.
+          <Alert tone="info" title="AI temporarily unavailable">
+            Live AI Research will be back shortly — please try again in a moment.
           </Alert>
         )}
         {error && (

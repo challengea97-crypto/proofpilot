@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { requireUser } from "@/lib/auth";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { getProject } from "@/lib/data/projects";
-import { isAnthropicConfigured, getAnthropicModel } from "@/lib/env";
+import { isAIConfigured, getGroqModel } from "@/lib/env";
 import { runResearch } from "@/lib/ai/research";
 import { insertNotification } from "@/lib/notifications";
 import type { ResearchResult } from "@/lib/ai/research-schema";
@@ -16,8 +16,8 @@ export type ResearchActionState = { error?: string; ok?: boolean };
 export async function runResearchAction(projectId: string): Promise<ResearchActionState> {
   const user = await requireUser();
 
-  if (!isAnthropicConfigured()) {
-    return { error: "AI research is not configured. Set ANTHROPIC_API_KEY (see docs/SETUP.md)." };
+  if (!isAIConfigured()) {
+    return { error: "AI is temporarily unavailable. Please try again shortly." };
   }
 
   const project = await getProject(user.id, projectId);
@@ -38,7 +38,7 @@ export async function runResearchAction(projectId: string): Promise<ResearchActi
   const { error } = await supabase.from("research_runs").insert({
     user_id: user.id,
     project_id: projectId,
-    model: getAnthropicModel(),
+    model: getGroqModel(),
     result: result as unknown as Json,
   });
   if (error) return { error: error.message };
