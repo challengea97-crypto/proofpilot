@@ -2,8 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { requireUser } from "@/lib/auth";
+import { requireUser, getProfile } from "@/lib/auth";
 import { createServerSupabase } from "@/lib/supabase/server";
+import { canUseWatchlists } from "@/lib/plan";
 
 const schema = z.object({
   label: z.string().trim().min(1, "Add a label").max(200),
@@ -36,6 +37,11 @@ export async function addWatchItemAction(
       if (key && !fieldErrors[key]) fieldErrors[key] = issue.message;
     }
     return { error: "Please fix the highlighted fields.", fieldErrors };
+  }
+
+  const profile = await getProfile(user);
+  if (!canUseWatchlists(profile?.plan)) {
+    return { error: "Watchlists are available on the Radar plan and above — upgrade in Billing." };
   }
 
   const supabase = await createServerSupabase();

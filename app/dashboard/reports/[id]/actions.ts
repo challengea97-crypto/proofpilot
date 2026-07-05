@@ -2,8 +2,9 @@
 
 import { randomUUID } from "crypto";
 import { revalidatePath } from "next/cache";
-import { requireUser } from "@/lib/auth";
+import { requireUser, getProfile } from "@/lib/auth";
 import { createServerSupabase } from "@/lib/supabase/server";
+import { canShareReports } from "@/lib/plan";
 
 export type ShareActionState = { error?: string };
 
@@ -13,8 +14,15 @@ export async function setReportShareAction(
   enable: boolean
 ): Promise<ShareActionState> {
   const user = await requireUser();
-  const supabase = await createServerSupabase();
 
+  if (enable) {
+    const profile = await getProfile(user);
+    if (!canShareReports(profile?.plan)) {
+      return { error: "Public share links are available on paid plans — upgrade in Billing." };
+    }
+  }
+
+  const supabase = await createServerSupabase();
   const share_token = enable ? randomUUID().replace(/-/g, "") : null;
   const { error } = await supabase
     .from("reports")

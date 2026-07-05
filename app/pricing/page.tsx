@@ -1,6 +1,7 @@
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 import { PricingCards } from "@/components/PricingCards";
+import { PricingComparison } from "@/components/PricingComparison";
 
 export default function PricingPage() {
   return (
@@ -14,6 +15,7 @@ export default function PricingPage() {
         <div className="mt-8">
           <PricingCards />
         </div>
+        <PricingComparison />
       </section>
       <Footer />
     </main>
