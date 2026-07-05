@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { redirect } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
 import { createServerSupabase } from "@/lib/supabase/server";
@@ -7,15 +8,18 @@ import type { ProfileRow } from "@/lib/supabase/types";
 /**
  * Returns the signed-in user, or `null` when there is no session (or when
  * Supabase isn't configured yet). Never throws.
+ *
+ * Wrapped in React cache() so layout + page + actions share ONE auth
+ * round-trip per request instead of each making their own.
  */
-export async function getOptionalUser(): Promise<User | null> {
+export const getOptionalUser = cache(async (): Promise<User | null> => {
   if (!isSupabaseConfigured()) return null;
   const supabase = await createServerSupabase();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   return user;
-}
+});
 
 /** Require a signed-in user; redirect to `/login` otherwise. */
 export async function requireUser(): Promise<User> {
@@ -27,9 +31,9 @@ export async function requireUser(): Promise<User> {
 /**
  * Fetch the profile row for a user, creating it on first access so downstream
  * code can always rely on a profile existing. Returns `null` only when
- * Supabase is unconfigured.
+ * Supabase is unconfigured. cache(): one profile query per request.
  */
-export async function getProfile(user: User): Promise<ProfileRow | null> {
+export const getProfile = cache(async (user: User): Promise<ProfileRow | null> => {
   if (!isSupabaseConfigured()) return null;
   const supabase = await createServerSupabase();
 
@@ -50,4 +54,4 @@ export async function getProfile(user: User): Promise<ProfileRow | null> {
     .maybeSingle();
 
   return created ?? null;
-}
+});

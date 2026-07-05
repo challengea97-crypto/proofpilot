@@ -6,10 +6,10 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    /*
-     * Run on all routes except Next.js internals and static asset files.
-     */
-    "/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
-  ],
+  /*
+   * Only the authenticated app area needs session refresh + protection.
+   * Marketing pages skip the auth round-trip entirely (much faster nav);
+   * the browser client and /auth/callback keep tokens fresh elsewhere.
+   */
+  matcher: ["/dashboard/:path*"],
 };

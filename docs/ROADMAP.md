@@ -36,5 +36,5 @@ This is a multi-tenant refactor touching every data query — best done as a foc
 
 ### Web-grounded citations
 Research is model-reasoned and clearly labelled "directional". To add real source-linked
-evidence, upgrade `@anthropic-ai/sdk` past the pinned `0.32.1`, enable the `web_search`
-server tool, and store cited URLs alongside each claim.
+evidence, pair the Groq analysis with a web-search API (e.g. Tavily or Brave Search),
+feed retrieved snippets into the prompt, and store cited URLs alongside each claim.
