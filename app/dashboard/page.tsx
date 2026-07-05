@@ -1,13 +1,13 @@
 import Link from "next/link";
-import { FolderKanban, Plus, Sparkles, CalendarDays, ArrowRight } from "lucide-react";
+import { FolderKanban, Plus, Sparkles, FileText, ArrowRight } from "lucide-react";
 import { requireUser, getProfile } from "@/lib/auth";
 import { listProjects } from "@/lib/data/projects";
+import { countReports } from "@/lib/data/reports";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ProjectCard } from "@/components/projects/ProjectCard";
 import { planLabel } from "@/lib/pricing";
-import { formatDate } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -37,7 +37,11 @@ function Stat({
 
 export default async function DashboardOverview() {
   const user = await requireUser();
-  const [projects, profile] = await Promise.all([listProjects(user.id), getProfile(user)]);
+  const [projects, profile, reportCount] = await Promise.all([
+    listProjects(user.id),
+    getProfile(user),
+    countReports(user.id),
+  ]);
   const recent = projects.slice(0, 4);
 
   return (
@@ -55,25 +59,21 @@ export default async function DashboardOverview() {
         </Link>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <Stat
           label="Projects"
           value={projects.length}
           icon={<FolderKanban className="h-5 w-5" aria-hidden />}
         />
         <Stat
+          label="Reports"
+          value={reportCount}
+          icon={<FileText className="h-5 w-5" aria-hidden />}
+        />
+        <Stat
           label="Plan"
           value={<Badge tone={profile?.plan && profile.plan !== "free" ? "accent" : "neutral"}>{planLabel(profile?.plan)}</Badge>}
           icon={<Sparkles className="h-5 w-5" aria-hidden />}
-        />
-        <Stat
-          label="Member since"
-          value={
-            <span className="text-base font-semibold">
-              {profile ? formatDate(profile.created_at) : "—"}
-            </span>
-          }
-          icon={<CalendarDays className="h-5 w-5" aria-hidden />}
         />
       </div>
 

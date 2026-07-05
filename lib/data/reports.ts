@@ -14,6 +14,21 @@ export async function listReports(userId: string): Promise<ReportRow[]> {
   return data ?? [];
 }
 
+/** Count of a user's saved reports. Resilient to an un-migrated table. */
+export async function countReports(userId: string): Promise<number> {
+  try {
+    const supabase = await createServerSupabase();
+    const { count, error } = await supabase
+      .from("reports")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", userId);
+    if (error) throw new Error(error.message);
+    return count ?? 0;
+  } catch {
+    return 0;
+  }
+}
+
 /** A single saved report owned by the user, or null. */
 export async function getReport(userId: string, id: string): Promise<ReportRow | null> {
   const supabase = await createServerSupabase();
