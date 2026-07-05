@@ -8,3 +8,7 @@ dist
 .vercel
 .netlify
 .DS_Store
+
+# TypeScript incremental build cache
+*.tsbuildinfo
+next-env.d.ts
