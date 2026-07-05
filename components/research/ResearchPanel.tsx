@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { Alert } from "@/components/ui/Alert";
 import { Badge } from "@/components/ui/Badge";
 import { Spinner } from "@/components/ui/Spinner";
+import { playChime } from "@/lib/sound";
 import type { ResearchResult, Competitor } from "@/lib/ai/research-schema";
 
 const CATEGORY_TONE: Record<Competitor["category"], "accent" | "warning" | "neutral"> = {
@@ -106,6 +107,7 @@ export function ResearchPanel({
     startTransition(async () => {
       const res = await runResearchAction(projectId);
       if (res.error) setError(res.error);
+      else playChime();
     });
   }
 

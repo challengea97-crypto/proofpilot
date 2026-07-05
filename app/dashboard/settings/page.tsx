@@ -4,6 +4,7 @@ import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/Ca
 import { Badge } from "@/components/ui/Badge";
 import { buttonVariants } from "@/components/ui/Button";
 import { SignOutButton } from "@/components/app/SignOutButton";
+import { SoundToggle } from "@/components/SoundToggle";
 import { planLabel } from "@/lib/pricing";
 import { formatDate } from "@/lib/utils";
 
@@ -60,6 +61,14 @@ export default async function SettingsPage() {
         <Link href="/dashboard/billing" className={`${buttonVariants({ variant: "secondary", size: "sm" })} mt-4`}>
           Go to Billing
         </Link>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Preferences</CardTitle>
+          <CardDescription>A soft chime plays when an AI run finishes.</CardDescription>
+        </CardHeader>
+        <SoundToggle />
       </Card>
 
       <Card>

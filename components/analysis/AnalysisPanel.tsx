@@ -6,6 +6,7 @@ import { runAnalysisAction } from "@/app/dashboard/projects/[id]/analysis-action
 import { Button } from "@/components/ui/Button";
 import { Alert } from "@/components/ui/Alert";
 import { Spinner } from "@/components/ui/Spinner";
+import { playChime } from "@/lib/sound";
 import type { AnalysisKind, AnalysisResult } from "@/lib/ai/analysis-kinds";
 
 function AnalysisResultView({ result }: { result: AnalysisResult }) {
@@ -57,6 +58,7 @@ export function AnalysisPanel({
     startTransition(async () => {
       const res = await runAnalysisAction(projectId, kind);
       if (res.error) setError(res.error);
+      else playChime();
     });
   }
 

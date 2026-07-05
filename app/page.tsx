@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
+import { Reveal } from "@/components/Reveal";
 import { buttonVariants } from "@/components/ui/Button";
 
 const FEATURES = [
@@ -54,7 +55,15 @@ const STEPS = [
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.10),transparent_30%),#070707]">
+    <main className="relative min-h-screen overflow-hidden bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.10),transparent_30%),#070707]">
+      <div
+        className="pointer-events-none absolute -left-32 top-24 -z-10 h-96 w-96 rounded-full bg-emerald-500/10 blur-3xl animate-aurora"
+        aria-hidden
+      />
+      <div
+        className="pointer-events-none absolute -right-40 top-52 -z-10 h-[28rem] w-[28rem] rounded-full bg-indigo-500/10 blur-3xl animate-aurora [animation-delay:-9s]"
+        aria-hidden
+      />
       <Nav />
 
       {/* Hero */}
@@ -140,7 +149,7 @@ export default function HomePage() {
 
       {/* CTA */}
       <section className="mx-auto max-w-7xl px-6 py-16">
-        <div className="rounded-3xl border border-neutral-800/80 bg-gradient-to-br from-neutral-900 to-neutral-950 p-10 text-center">
+        <Reveal className="rounded-3xl border border-neutral-800/80 bg-gradient-to-br from-neutral-900 to-neutral-950 p-10 text-center">
           <h2 className="text-3xl font-black sm:text-4xl">Stop guessing. Start proving.</h2>
           <p className="mx-auto mt-3 max-w-xl text-neutral-400">
             Run a free reality check now, then upgrade when you need a serious report.
@@ -154,7 +163,7 @@ export default function HomePage() {
               View pricing
             </Link>
           </div>
-        </div>
+        </Reveal>
       </section>
 
       <Footer />

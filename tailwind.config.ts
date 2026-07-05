@@ -34,9 +34,14 @@ const config: Config = {
           from: { opacity: "0", transform: "translateY(6px)" },
           to: { opacity: "1", transform: "translateY(0)" },
         },
+        aurora: {
+          "0%, 100%": { transform: "translate3d(-8%, -6%, 0) scale(1)" },
+          "50%": { transform: "translate3d(8%, 6%, 0) scale(1.25)" },
+        },
       },
       animation: {
         "fade-in": "fade-in 0.5s ease-out both",
+        aurora: "aurora 22s ease-in-out infinite",
       },
     },
   },
