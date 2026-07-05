@@ -3,10 +3,13 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, Gauge, Target, ListChecks, Users, AlertCircle } from "lucide-react";
 import { requireUser } from "@/lib/auth";
 import { getProject } from "@/lib/data/projects";
+import { getLatestResearch } from "@/lib/data/research";
 import { generateLocalReport } from "@/lib/report";
+import { isAnthropicConfigured } from "@/lib/env";
+import { ResearchResultSchema } from "@/lib/ai/research-schema";
+import { ResearchPanel } from "@/components/research/ResearchPanel";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-import { Alert } from "@/components/ui/Alert";
 import { DeleteProjectButton } from "@/components/projects/DeleteProjectButton";
 import { formatDate } from "@/lib/utils";
 
@@ -33,13 +36,25 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   const project = await getProject(user.id, id);
   if (!project) notFound();
 
-  // Fast, deterministic local heuristic — clearly labelled as non-AI. Phase 2
-  // adds the evidence-backed Live AI Research panel in this same view.
+  // Fast, deterministic local heuristic — clearly labelled as non-AI. The
+  // evidence-directional Live AI Research panel below calls Claude for real.
   const snapshot = generateLocalReport({
     idea: project.idea,
     audience: project.audience ?? "",
     problem: project.problem ?? "",
   });
+
+  // Latest saved AI research run (resilient: if the research_runs table isn't
+  // migrated yet, treat as no runs rather than crashing the page).
+  const configured = isAnthropicConfigured();
+  let latestResult = null;
+  try {
+    const latestRun = await getLatestResearch(user.id, project.id);
+    const parsed = latestRun ? ResearchResultSchema.safeParse(latestRun.result) : null;
+    latestResult = parsed && parsed.success ? parsed.data : null;
+  } catch {
+    latestResult = null;
+  }
 
   return (
     <div className="space-y-8">
@@ -132,10 +147,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         </Card>
       </div>
 
-      <Alert tone="info" title="Live AI Research attaches here">
-        Evidence-backed competitors, demand signals, review mining and pricing analysis will run
-        against this brief once the research engine is enabled.
-      </Alert>
+      <ResearchPanel projectId={project.id} latest={latestResult} configured={configured} />
     </div>
   );
 }

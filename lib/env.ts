@@ -43,6 +43,21 @@ export function isAnthropicConfigured(): boolean {
   return Boolean(process.env.ANTHROPIC_API_KEY);
 }
 
+export function getAnthropicApiKey(): string {
+  const key = process.env.ANTHROPIC_API_KEY;
+  if (!key) {
+    throw new Error(
+      "Live AI Research is not configured. Set ANTHROPIC_API_KEY (see docs/SETUP.md)."
+    );
+  }
+  return key;
+}
+
+/** Model used for AI research; overridable so it can target whatever the key can access. */
+export function getAnthropicModel(): string {
+  return process.env.ANTHROPIC_MODEL || "claude-opus-4-8";
+}
+
 /** Absolute base URL of the deployment, used for Stripe redirects and links. */
 export function getSiteUrl(): string {
   return process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
