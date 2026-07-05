@@ -1,4 +1,4 @@
-import { AuthShell } from "@/components/auth/AuthShell";
+import { AuthSplit } from "@/components/auth/AuthSplit";
 import { ResetPasswordForm } from "@/components/auth/ResetPasswordForm";
 
 export const dynamic = "force-dynamic";
@@ -9,8 +9,8 @@ export const metadata = {
 
 export default function ResetPasswordPage() {
   return (
-    <AuthShell title="Reset password" subtitle="We'll email you a secure link to set a new one.">
+    <AuthSplit title="Reset password" subtitle="We'll email you a secure link to set a new one.">
       <ResetPasswordForm />
-    </AuthShell>
+    </AuthSplit>
   );
 }
