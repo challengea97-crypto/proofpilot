@@ -1,5 +1,6 @@
 import { isSupabaseConfigured } from "@/lib/env";
 import { requireUser, getProfile } from "@/lib/auth";
+import { countUnread } from "@/lib/data/notifications";
 import { AppShell } from "@/components/app/AppShell";
 import { SetupNotice } from "@/components/SetupNotice";
 
@@ -25,10 +26,14 @@ export default async function DashboardLayout({ children }: { children: React.Re
   }
 
   const user = await requireUser();
-  const profile = await getProfile(user);
+  const [profile, unreadCount] = await Promise.all([getProfile(user), countUnread(user.id)]);
 
   return (
-    <AppShell userEmail={user.email ?? ""} plan={profile?.plan ?? "free"}>
+    <AppShell
+      userEmail={user.email ?? ""}
+      plan={profile?.plan ?? "free"}
+      unreadCount={unreadCount}
+    >
       {children}
     </AppShell>
   );

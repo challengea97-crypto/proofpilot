@@ -69,6 +69,21 @@ create table if not exists public.watchlist_items (
   created_at timestamptz default now()
 );
 
+-- Monitoring state for watchlist URLs (populated by the scheduled monitor job).
+alter table public.watchlist_items add column if not exists last_hash text;
+alter table public.watchlist_items add column if not exists last_checked_at timestamptz;
+
+create table if not exists public.notifications (
+  id uuid primary key default uuid_generate_v4(),
+  user_id uuid references auth.users(id) on delete cascade,
+  project_id uuid references public.projects(id) on delete cascade,
+  title text not null,
+  body text,
+  url text,
+  read boolean not null default false,
+  created_at timestamptz default now()
+);
+
 alter table public.profiles enable row level security;
 alter table public.projects enable row level security;
 alter table public.reports enable row level security;
@@ -109,5 +124,12 @@ alter table public.watchlist_items enable row level security;
 
 create policy "Users can manage own watchlist"
 on public.watchlist_items for all
+using (auth.uid() = user_id)
+with check (auth.uid() = user_id);
+
+alter table public.notifications enable row level security;
+
+create policy "Users can manage own notifications"
+on public.notifications for all
 using (auth.uid() = user_id)
 with check (auth.uid() = user_id);

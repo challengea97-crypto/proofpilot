@@ -206,6 +206,8 @@ export interface Database {
           label: string;
           url: string | null;
           note: string | null;
+          last_hash: string | null;
+          last_checked_at: string | null;
           created_at: string;
         };
         Insert: {
@@ -215,6 +217,8 @@ export interface Database {
           label: string;
           url?: string | null;
           note?: string | null;
+          last_hash?: string | null;
+          last_checked_at?: string | null;
           created_at?: string;
         };
         Update: {
@@ -224,6 +228,41 @@ export interface Database {
           label?: string;
           url?: string | null;
           note?: string | null;
+          last_hash?: string | null;
+          last_checked_at?: string | null;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      notifications: {
+        Row: {
+          id: string;
+          user_id: string;
+          project_id: string | null;
+          title: string;
+          body: string | null;
+          url: string | null;
+          read: boolean;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          project_id?: string | null;
+          title: string;
+          body?: string | null;
+          url?: string | null;
+          read?: boolean;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          project_id?: string | null;
+          title?: string;
+          body?: string | null;
+          url?: string | null;
+          read?: boolean;
           created_at?: string;
         };
         Relationships: [];
@@ -244,3 +283,4 @@ export type BillingEventRow = Database["public"]["Tables"]["billing_events"]["Ro
 export type ResearchRunRow = Database["public"]["Tables"]["research_runs"]["Row"];
 export type AnalysisRow = Database["public"]["Tables"]["analyses"]["Row"];
 export type WatchlistItemRow = Database["public"]["Tables"]["watchlist_items"]["Row"];
+export type NotificationRow = Database["public"]["Tables"]["notifications"]["Row"];

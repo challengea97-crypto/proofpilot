@@ -6,7 +6,8 @@ import { createServerSupabase } from "@/lib/supabase/server";
 import { getProject } from "@/lib/data/projects";
 import { isAnthropicConfigured, getAnthropicModel } from "@/lib/env";
 import { runAnalysis } from "@/lib/ai/analysis";
-import { isAnalysisKind, type AnalysisResult } from "@/lib/ai/analysis-kinds";
+import { isAnalysisKind, ANALYSIS_CONFIG, type AnalysisResult } from "@/lib/ai/analysis-kinds";
+import { insertNotification } from "@/lib/notifications";
 import type { Json } from "@/lib/supabase/types";
 
 export type AnalysisActionState = { error?: string; ok?: boolean };
@@ -46,6 +47,13 @@ export async function runAnalysisAction(
     result: result as unknown as Json,
   });
   if (error) return { error: error.message };
+
+  await insertNotification(user.id, {
+    projectId,
+    title: `${ANALYSIS_CONFIG[kind].title} ready`,
+    body: `Generated for “${project.name}”.`,
+    url: `/dashboard/projects/${projectId}`,
+  });
 
   revalidatePath(`/dashboard/projects/${projectId}`);
   return { ok: true };

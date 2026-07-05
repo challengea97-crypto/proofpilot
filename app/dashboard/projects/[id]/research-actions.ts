@@ -6,6 +6,7 @@ import { createServerSupabase } from "@/lib/supabase/server";
 import { getProject } from "@/lib/data/projects";
 import { isAnthropicConfigured, getAnthropicModel } from "@/lib/env";
 import { runResearch } from "@/lib/ai/research";
+import { insertNotification } from "@/lib/notifications";
 import type { ResearchResult } from "@/lib/ai/research-schema";
 import type { Json } from "@/lib/supabase/types";
 
@@ -41,6 +42,13 @@ export async function runResearchAction(projectId: string): Promise<ResearchActi
     result: result as unknown as Json,
   });
   if (error) return { error: error.message };
+
+  await insertNotification(user.id, {
+    projectId,
+    title: "Research complete",
+    body: `Live AI Research is ready for “${project.name}”.`,
+    url: `/dashboard/projects/${projectId}`,
+  });
 
   revalidatePath(`/dashboard/projects/${projectId}`);
   return { ok: true };

@@ -9,6 +9,7 @@ import { getLatestResearch } from "@/lib/data/research";
 import { getLatestAnalyses } from "@/lib/data/analyses";
 import { ResearchResultSchema, type ResearchResult } from "@/lib/ai/research-schema";
 import { buildFounderReport } from "@/lib/reports/build";
+import { insertNotification } from "@/lib/notifications";
 import type { Json } from "@/lib/supabase/types";
 
 export type SaveReportState = { error?: string };
@@ -55,6 +56,13 @@ export async function saveReportAction(projectId: string): Promise<SaveReportSta
   if (error || !data) {
     return { error: error?.message ?? "Could not save the report. Please try again." };
   }
+
+  await insertNotification(user.id, {
+    projectId,
+    title: "Report saved",
+    body: `“${report.title}” is ready to view and export.`,
+    url: `/dashboard/reports/${data.id}`,
+  });
 
   revalidatePath("/dashboard/reports");
   redirect(`/dashboard/reports/${data.id}`);

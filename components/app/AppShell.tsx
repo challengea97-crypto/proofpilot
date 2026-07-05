@@ -8,6 +8,7 @@ import {
   FolderKanban,
   FileText,
   CreditCard,
+  Bell,
   Settings,
   ShieldCheck,
   Menu,
@@ -29,6 +30,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard, exact: true },
   { href: "/dashboard/projects", label: "Projects", icon: FolderKanban },
   { href: "/dashboard/reports", label: "Reports", icon: FileText },
+  { href: "/dashboard/notifications", label: "Notifications", icon: Bell },
   { href: "/dashboard/billing", label: "Billing", icon: CreditCard },
   { href: "/dashboard/settings", label: "Settings", icon: Settings },
 ];
@@ -41,10 +43,12 @@ function isActive(pathname: string, item: NavItem): boolean {
 export function AppShell({
   userEmail,
   plan,
+  unreadCount = 0,
   children,
 }: {
   userEmail: string;
   plan: string;
+  unreadCount?: number;
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
@@ -55,6 +59,7 @@ export function AppShell({
       {NAV_ITEMS.map((item) => {
         const active = isActive(pathname, item);
         const Icon = item.icon;
+        const showBadge = item.href === "/dashboard/notifications" && unreadCount > 0;
         return (
           <Link
             key={item.href}
@@ -62,14 +67,21 @@ export function AppShell({
             onClick={() => setOpen(false)}
             aria-current={active ? "page" : undefined}
             className={cn(
-              "flex items-center gap-3 rounded-2xl px-4 py-2.5 text-sm font-medium transition",
+              "flex items-center justify-between gap-3 rounded-2xl px-4 py-2.5 text-sm font-medium transition",
               active
                 ? "bg-white text-neutral-950"
                 : "text-neutral-400 hover:bg-neutral-900 hover:text-white"
             )}
           >
-            <Icon className="h-5 w-5" aria-hidden />
-            {item.label}
+            <span className="flex items-center gap-3">
+              <Icon className="h-5 w-5" aria-hidden />
+              {item.label}
+            </span>
+            {showBadge && (
+              <span className="rounded-full bg-red-500 px-1.5 py-0.5 text-[10px] font-bold text-white">
+                {unreadCount > 9 ? "9+" : unreadCount}
+              </span>
+            )}
           </Link>
         );
       })}
