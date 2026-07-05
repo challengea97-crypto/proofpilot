@@ -9,6 +9,7 @@ import {
   FileText,
   CreditCard,
   Bell,
+  Shield,
   Settings,
   ShieldCheck,
   Menu,
@@ -35,6 +36,8 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/dashboard/settings", label: "Settings", icon: Settings },
 ];
 
+const ADMIN_ITEM: NavItem = { href: "/dashboard/admin", label: "Admin", icon: Shield };
+
 function isActive(pathname: string, item: NavItem): boolean {
   if (item.exact) return pathname === item.href;
   return pathname === item.href || pathname.startsWith(`${item.href}/`);
@@ -44,19 +47,22 @@ export function AppShell({
   userEmail,
   plan,
   unreadCount = 0,
+  isAdmin = false,
   children,
 }: {
   userEmail: string;
   plan: string;
   unreadCount?: number;
+  isAdmin?: boolean;
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const items = isAdmin ? [...NAV_ITEMS, ADMIN_ITEM] : NAV_ITEMS;
 
   const nav = (
     <nav className="space-y-1" aria-label="Primary">
-      {NAV_ITEMS.map((item) => {
+      {items.map((item) => {
         const active = isActive(pathname, item);
         const Icon = item.icon;
         const showBadge = item.href === "/dashboard/notifications" && unreadCount > 0;

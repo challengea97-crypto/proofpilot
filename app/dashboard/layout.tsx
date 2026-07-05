@@ -1,4 +1,4 @@
-import { isSupabaseConfigured } from "@/lib/env";
+import { isSupabaseConfigured, isAdminEmail } from "@/lib/env";
 import { requireUser, getProfile } from "@/lib/auth";
 import { countUnread } from "@/lib/data/notifications";
 import { AppShell } from "@/components/app/AppShell";
@@ -33,6 +33,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
       userEmail={user.email ?? ""}
       plan={profile?.plan ?? "free"}
       unreadCount={unreadCount}
+      isAdmin={isAdminEmail(user.email)}
     >
       {children}
     </AppShell>
