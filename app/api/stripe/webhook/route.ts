@@ -1,7 +1,60 @@
 import { NextRequest, NextResponse } from "next/server";
+import type Stripe from "stripe";
 import { getStripe } from "@/lib/stripe";
 import { createServiceSupabase } from "@/lib/supabase/server";
+import { planFromPriceId } from "@/lib/pricing";
 import type { Json } from "@/lib/supabase/types";
+
+type ServiceClient = ReturnType<typeof createServiceSupabase>;
+
+/** Reflect a Stripe event onto the user's profile (plan + customer id). */
+async function syncProfile(supabase: ServiceClient, event: Stripe.Event) {
+  try {
+    if (event.type === "checkout.session.completed") {
+      const session = event.data.object as Stripe.Checkout.Session;
+      const userId = session.metadata?.user_id ?? session.client_reference_id ?? null;
+      if (!userId) return;
+      await supabase
+        .from("profiles")
+        .update({
+          plan: session.metadata?.plan ?? "free",
+          stripe_customer_id: typeof session.customer === "string" ? session.customer : null,
+        })
+        .eq("id", userId);
+      return;
+    }
+
+    if (
+      event.type === "customer.subscription.created" ||
+      event.type === "customer.subscription.updated" ||
+      event.type === "customer.subscription.deleted"
+    ) {
+      const subscription = event.data.object as Stripe.Subscription;
+      const userId = subscription.metadata?.user_id ?? null;
+      if (!userId) return;
+
+      if (event.type === "customer.subscription.deleted" || subscription.status !== "active") {
+        await supabase.from("profiles").update({ plan: "free" }).eq("id", userId);
+        return;
+      }
+
+      const priceId = subscription.items.data[0]?.price?.id;
+      const plan = priceId ? planFromPriceId(priceId) : null;
+      if (plan) {
+        await supabase
+          .from("profiles")
+          .update({
+            plan,
+            stripe_customer_id:
+              typeof subscription.customer === "string" ? subscription.customer : null,
+          })
+          .eq("id", userId);
+      }
+    }
+  } catch {
+    // Never fail the webhook because of a profile-sync hiccup; Stripe retries.
+  }
+}
 
 export async function POST(request: NextRequest) {
   const stripe = getStripe();
@@ -18,35 +71,25 @@ export async function POST(request: NextRequest) {
     const event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
     const supabase = createServiceSupabase();
 
-    if (event.type === "checkout.session.completed") {
-      const session = event.data.object as any;
+    // Audit log (best-effort).
+    try {
+      const object = event.data.object as unknown as Record<string, unknown>;
       await supabase.from("billing_events").insert({
         stripe_event_id: event.id,
         event_type: event.type,
-        customer_id: session.customer || null,
-        subscription_id: session.subscription || null,
-        checkout_session_id: session.id,
-        plan: session.metadata?.plan || null,
-        status: "completed",
-        raw: event as unknown as Json
+        customer_id: (object.customer as string) ?? null,
+        subscription_id:
+          (object.subscription as string) ?? (object.id as string) ?? null,
+        checkout_session_id: event.type.startsWith("checkout.") ? (object.id as string) : null,
+        plan: ((object.metadata as Record<string, string>) ?? {}).plan ?? null,
+        status: (object.status as string) ?? event.type,
+        raw: event as unknown as Json,
       });
+    } catch {
+      // Ignore duplicate/insert errors — the sync below is what grants access.
     }
 
-    if (
-      event.type === "customer.subscription.created" ||
-      event.type === "customer.subscription.updated" ||
-      event.type === "customer.subscription.deleted" ||
-      event.type === "invoice.payment_failed"
-    ) {
-      await supabase.from("billing_events").insert({
-        stripe_event_id: event.id,
-        event_type: event.type,
-        customer_id: (event.data.object as any).customer || null,
-        subscription_id: (event.data.object as any).id || null,
-        status: (event.data.object as any).status || event.type,
-        raw: event as unknown as Json
-      });
-    }
+    await syncProfile(supabase, event);
 
     return NextResponse.json({ received: true });
   } catch (error) {

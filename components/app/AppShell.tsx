@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   FolderKanban,
   FileText,
+  CreditCard,
   Settings,
   ShieldCheck,
   Menu,
@@ -28,6 +29,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard, exact: true },
   { href: "/dashboard/projects", label: "Projects", icon: FolderKanban },
   { href: "/dashboard/reports", label: "Reports", icon: FileText },
+  { href: "/dashboard/billing", label: "Billing", icon: CreditCard },
   { href: "/dashboard/settings", label: "Settings", icon: Settings },
 ];
 

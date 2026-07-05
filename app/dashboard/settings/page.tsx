@@ -1,6 +1,8 @@
+import Link from "next/link";
 import { requireUser, getProfile } from "@/lib/auth";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
+import { buttonVariants } from "@/components/ui/Button";
 import { SignOutButton } from "@/components/app/SignOutButton";
 import { planLabel } from "@/lib/pricing";
 import { formatDate } from "@/lib/utils";
@@ -53,10 +55,11 @@ export default async function SettingsPage() {
           <CardDescription>Upgrade, downgrade and manage payment methods.</CardDescription>
         </CardHeader>
         <p className="text-sm text-neutral-400">
-          Subscription management opens in the Billing area once billing is enabled for your
-          account.
-          {/* TODO(Phase 5): link to /dashboard/billing (Stripe customer portal). */}
+          Upgrade, manage your subscription, or open the customer portal.
         </p>
+        <Link href="/dashboard/billing" className={`${buttonVariants({ variant: "secondary", size: "sm" })} mt-4`}>
+          Go to Billing
+        </Link>
       </Card>
 
       <Card>

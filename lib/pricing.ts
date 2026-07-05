@@ -41,3 +41,11 @@ export const PLAN_LABELS: Record<string, string> = {
 export function planLabel(plan: string | null | undefined): string {
   return (plan && PLAN_LABELS[plan]) || "Free";
 }
+
+/** Reverse-map a Stripe price ID back to a plan key (used by the webhook). */
+export function planFromPriceId(priceId: string): PlanKey | null {
+  const entry = (Object.entries(PRICE_IDS) as [PlanKey, string][]).find(
+    ([, id]) => id === priceId
+  );
+  return entry ? entry[0] : null;
+}

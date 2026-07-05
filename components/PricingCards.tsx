@@ -21,7 +21,13 @@ export function PricingCards() {
       });
 
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "Checkout failed");
+      if (!response.ok) {
+        if (data.requiresAuth) {
+          window.location.href = "/login?redirectTo=/dashboard/billing";
+          return;
+        }
+        throw new Error(data.error || "Checkout failed");
+      }
 
       window.location.href = data.url;
     } catch (err) {
