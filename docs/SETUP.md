@@ -67,6 +67,18 @@ repo, add the environment variables above, and deploy. Set `NEXT_PUBLIC_SITE_URL
 to your Netlify URL and redeploy so Stripe redirects and metadata resolve
 correctly.
 
+## 5. Scheduled watchlist monitoring (optional)
+
+Teckro ships a daily Netlify Scheduled Function (`netlify/functions/monitor.mts`)
+that checks watchlist URLs for changes and creates in-app notifications.
+
+1. Set `CRON_SECRET` to a long random string in Netlify (and `.env.local` for local testing).
+2. Deploy. Netlify auto-registers the scheduled function (runs daily at 08:00 UTC).
+3. To test manually: `POST https://YOUR_DOMAIN/api/cron/monitor` with header
+   `x-cron-secret: <your CRON_SECRET>`.
+
+Requires `SUPABASE_SERVICE_ROLE_KEY` (the job runs with elevated access).
+
 ---
 
 ## Local development
