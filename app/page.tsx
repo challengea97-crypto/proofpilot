@@ -94,6 +94,21 @@ const VS_ROWS: [string, boolean][] = [
   ["Answers your questions conversationally", true],
 ];
 
+const FOUNDER_QA: { ask: string; answer: string }[] = [
+  {
+    ask: "“Is my idea actually worth building?”",
+    answer: "Run Live AI Research: an honest 0–100 opportunity score, a clear verdict, and the risks nobody tells you about.",
+  },
+  {
+    ask: "“Who am I really competing with?”",
+    answer: "A competitor map across direct, indirect and substitute players — plus a live web scan with the sources it used.",
+  },
+  {
+    ask: "“What should I build first?”",
+    answer: "The MVP Planner draws the line: must-haves, next-ups, and what to refuse to build — with milestones and success metrics.",
+  },
+];
+
 const FAQ_TEASER: [string, string][] = [
   [
     "Is the AI real, or is this a demo?",
@@ -233,6 +248,24 @@ export default function HomePage() {
               <h3 className="mt-2 text-lg font-bold">{step.title}</h3>
               <p className="mt-2 text-sm text-neutral-400">{step.body}</p>
             </div>
+          ))}
+        </Reveal>
+      </section>
+
+      {/* Founders ask → Teckro answers */}
+      <section className="mx-auto max-w-7xl px-6 py-12">
+        <h2 className="text-3xl font-black sm:text-4xl">The questions that keep founders up at night</h2>
+        <Reveal className="mt-8 grid gap-4 md:grid-cols-3">
+          {FOUNDER_QA.map(({ ask, answer }) => (
+            <figure
+              key={ask}
+              className="flex flex-col rounded-3xl border border-neutral-800/80 bg-gradient-to-b from-neutral-900/70 to-neutral-950/60 p-6"
+            >
+              <blockquote className="text-lg font-bold leading-snug text-white">{ask}</blockquote>
+              <figcaption className="mt-4 border-t border-neutral-800 pt-4 text-sm leading-6 text-neutral-400">
+                {answer}
+              </figcaption>
+            </figure>
           ))}
         </Reveal>
       </section>

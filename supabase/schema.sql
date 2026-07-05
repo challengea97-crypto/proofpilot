@@ -179,7 +179,13 @@ using (
 drop policy if exists "Owners write research" on public.research_runs;
 create policy "Owners write research"
 on public.research_runs for insert
-with check (auth.uid() = user_id);
+with check (
+  auth.uid() = user_id
+  and exists (
+    select 1 from public.projects p
+    where p.id = research_runs.project_id and p.user_id = auth.uid()
+  )
+);
 drop policy if exists "Owners delete research" on public.research_runs;
 create policy "Owners delete research"
 on public.research_runs for delete
@@ -203,7 +209,13 @@ using (
 drop policy if exists "Owners write analyses" on public.analyses;
 create policy "Owners write analyses"
 on public.analyses for insert
-with check (auth.uid() = user_id);
+with check (
+  auth.uid() = user_id
+  and exists (
+    select 1 from public.projects p
+    where p.id = analyses.project_id and p.user_id = auth.uid()
+  )
+);
 drop policy if exists "Owners delete analyses" on public.analyses;
 create policy "Owners delete analyses"
 on public.analyses for delete
@@ -227,7 +239,13 @@ using (
 drop policy if exists "Owners write watchlist" on public.watchlist_items;
 create policy "Owners write watchlist"
 on public.watchlist_items for insert
-with check (auth.uid() = user_id);
+with check (
+  auth.uid() = user_id
+  and exists (
+    select 1 from public.projects p
+    where p.id = watchlist_items.project_id and p.user_id = auth.uid()
+  )
+);
 drop policy if exists "Owners update watchlist" on public.watchlist_items;
 create policy "Owners update watchlist"
 on public.watchlist_items for update
