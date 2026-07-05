@@ -14,13 +14,14 @@ async function syncProfile(supabase: ServiceClient, event: Stripe.Event) {
       const session = event.data.object as Stripe.Checkout.Session;
       const userId = session.metadata?.user_id ?? session.client_reference_id ?? null;
       if (!userId) return;
-      await supabase
-        .from("profiles")
-        .update({
+      await supabase.from("profiles").upsert(
+        {
+          id: userId,
           plan: session.metadata?.plan ?? "free",
           stripe_customer_id: typeof session.customer === "string" ? session.customer : null,
-        })
-        .eq("id", userId);
+        },
+        { onConflict: "id" }
+      );
       return;
     }
 
@@ -33,22 +34,24 @@ async function syncProfile(supabase: ServiceClient, event: Stripe.Event) {
       const userId = subscription.metadata?.user_id ?? null;
       if (!userId) return;
 
-      if (event.type === "customer.subscription.deleted" || subscription.status !== "active") {
-        await supabase.from("profiles").update({ plan: "free" }).eq("id", userId);
+      const activeStatuses = ["active", "trialing"];
+      if (event.type === "customer.subscription.deleted" || !activeStatuses.includes(subscription.status)) {
+        await supabase.from("profiles").upsert({ id: userId, plan: "free" }, { onConflict: "id" });
         return;
       }
 
       const priceId = subscription.items.data[0]?.price?.id;
       const plan = priceId ? planFromPriceId(priceId) : null;
       if (plan) {
-        await supabase
-          .from("profiles")
-          .update({
+        await supabase.from("profiles").upsert(
+          {
+            id: userId,
             plan,
             stripe_customer_id:
               typeof subscription.customer === "string" ? subscription.customer : null,
-          })
-          .eq("id", userId);
+          },
+          { onConflict: "id" }
+        );
       }
     }
   } catch {

@@ -41,10 +41,11 @@ export async function getProfile(user: User): Promise<ProfileRow | null> {
 
   if (existing) return existing;
 
-  // Lazily create the profile on first sign-in.
+  // Lazily create the profile on first sign-in (upsert tolerates a concurrent
+  // create between the select above and here).
   const { data: created } = await supabase
     .from("profiles")
-    .insert({ id: user.id, email: user.email ?? null })
+    .upsert({ id: user.id, email: user.email ?? null }, { onConflict: "id" })
     .select("*")
     .maybeSingle();
 

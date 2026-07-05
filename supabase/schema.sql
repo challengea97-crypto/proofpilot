@@ -94,24 +94,34 @@ alter table public.reports enable row level security;
 alter table public.billing_events enable row level security;
 alter table public.research_runs enable row level security;
 
+drop policy if exists "Users can read own profile" on public.profiles;
 create policy "Users can read own profile"
 on public.profiles for select
 using (auth.uid() = id);
 
+drop policy if exists "Users can insert own profile" on public.profiles;
+create policy "Users can insert own profile"
+on public.profiles for insert
+with check (auth.uid() = id);
+
+drop policy if exists "Users can update own profile" on public.profiles;
 create policy "Users can update own profile"
 on public.profiles for update
 using (auth.uid() = id);
 
+drop policy if exists "Users can manage own projects" on public.projects;
 create policy "Users can manage own projects"
 on public.projects for all
 using (auth.uid() = user_id)
 with check (auth.uid() = user_id);
 
+drop policy if exists "Users can manage own reports" on public.reports;
 create policy "Users can manage own reports"
 on public.reports for all
 using (auth.uid() = user_id)
 with check (auth.uid() = user_id);
 
+drop policy if exists "Users can manage own research runs" on public.research_runs;
 create policy "Users can manage own research runs"
 on public.research_runs for all
 using (auth.uid() = user_id)
@@ -119,6 +129,7 @@ with check (auth.uid() = user_id);
 
 alter table public.analyses enable row level security;
 
+drop policy if exists "Users can manage own analyses" on public.analyses;
 create policy "Users can manage own analyses"
 on public.analyses for all
 using (auth.uid() = user_id)
@@ -126,6 +137,7 @@ with check (auth.uid() = user_id);
 
 alter table public.watchlist_items enable row level security;
 
+drop policy if exists "Users can manage own watchlist" on public.watchlist_items;
 create policy "Users can manage own watchlist"
 on public.watchlist_items for all
 using (auth.uid() = user_id)
@@ -133,6 +145,7 @@ with check (auth.uid() = user_id);
 
 alter table public.notifications enable row level security;
 
+drop policy if exists "Users can manage own notifications" on public.notifications;
 create policy "Users can manage own notifications"
 on public.notifications for all
 using (auth.uid() = user_id)
