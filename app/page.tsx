@@ -12,6 +12,7 @@ import {
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 import { Reveal } from "@/components/Reveal";
+import { ProductPreview } from "@/components/ProductPreview";
 import { buttonVariants } from "@/components/ui/Button";
 
 const FEATURES = [
@@ -111,13 +112,20 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Product preview */}
+      <section className="mx-auto max-w-7xl px-6 pb-6">
+        <Reveal>
+          <ProductPreview />
+        </Reveal>
+      </section>
+
       {/* Features */}
       <section className="mx-auto max-w-7xl px-6 py-12">
         <h2 className="text-3xl font-black sm:text-4xl">Everything you need to de-risk an idea</h2>
         <p className="mt-3 max-w-2xl text-neutral-400">
           Each module produces evidence you can act on — not vibes.
         </p>
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <Reveal className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {FEATURES.map(({ icon: Icon, title, body }) => (
             <div
               key={title}
@@ -130,13 +138,13 @@ export default function HomePage() {
               <p className="mt-2 text-sm text-neutral-400">{body}</p>
             </div>
           ))}
-        </div>
+        </Reveal>
       </section>
 
       {/* How it works */}
       <section className="mx-auto max-w-7xl px-6 py-12">
         <h2 className="text-3xl font-black sm:text-4xl">How it works</h2>
-        <div className="mt-8 grid gap-4 md:grid-cols-3">
+        <Reveal className="mt-8 grid gap-4 md:grid-cols-3">
           {STEPS.map((step) => (
             <div key={step.n} className="rounded-3xl border border-neutral-800/80 bg-neutral-950/60 p-6">
               <p className="text-sm font-black text-neutral-600">{step.n}</p>
@@ -144,7 +152,7 @@ export default function HomePage() {
               <p className="mt-2 text-sm text-neutral-400">{step.body}</p>
             </div>
           ))}
-        </div>
+        </Reveal>
       </section>
 
       {/* CTA */}
