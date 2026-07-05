@@ -2,10 +2,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { requireUser } from "@/lib/auth";
-import { getProject } from "@/lib/data/projects";
+import { getVisibleProject } from "@/lib/data/projects";
 import { getLatestResearch, listResearchScores } from "@/lib/data/research";
 import { getLatestAnalyses } from "@/lib/data/analyses";
 import { listWatchItems } from "@/lib/data/watchlist";
+import { listMembers } from "@/lib/data/team";
 import { isAIConfigured } from "@/lib/env";
 import { ResearchResultSchema, type ResearchResult } from "@/lib/ai/research-schema";
 import { buildFounderReport } from "@/lib/reports/build";
@@ -22,25 +23,27 @@ export const metadata = {
 export default async function ProjectDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const user = await requireUser();
-  const project = await getProject(user.id, id);
+  const project = await getVisibleProject(id);
   if (!project) notFound();
+  const isOwner = project.user_id === user.id;
 
   const configured = isAIConfigured();
 
   // Latest AI research (resilient if the research_runs table isn't migrated yet).
   let research: ResearchResult | null = null;
   try {
-    const run = await getLatestResearch(user.id, project.id);
+    const run = await getLatestResearch(project.id);
     const parsed = run ? ResearchResultSchema.safeParse(run.result) : null;
     research = parsed && parsed.success ? parsed.data : null;
   } catch {
     research = null;
   }
 
-  const [analyses, watchItems, researchHistory] = await Promise.all([
-    getLatestAnalyses(user.id, project.id),
-    listWatchItems(user.id, project.id),
-    listResearchScores(user.id, project.id),
+  const [analyses, watchItems, researchHistory, members] = await Promise.all([
+    getLatestAnalyses(project.id),
+    listWatchItems(project.id),
+    listResearchScores(project.id),
+    listMembers(project.id),
   ]);
   const report = buildFounderReport(
     { name: project.name, idea: project.idea, audience: project.audience, problem: project.problem },
@@ -63,7 +66,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           <h1 className="text-2xl font-black sm:text-3xl">{project.name}</h1>
           <p className="mt-1 text-sm text-neutral-500">Created {formatDate(project.created_at)}</p>
         </div>
-        <DeleteProjectButton id={project.id} />
+        {isOwner && <DeleteProjectButton id={project.id} />}
       </div>
 
       <ProjectWorkspace
@@ -73,6 +76,8 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         analyses={analyses}
         report={report}
         watchItems={watchItems}
+        members={members}
+        isOwner={isOwner}
         configured={configured}
       />
     </div>

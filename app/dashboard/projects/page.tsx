@@ -1,7 +1,8 @@
 import { requireUser } from "@/lib/auth";
-import { listProjects } from "@/lib/data/projects";
+import { listVisibleProjects } from "@/lib/data/projects";
 import { NewProjectForm } from "@/components/projects/NewProjectForm";
 import { ProjectsExplorer } from "@/components/projects/ProjectsExplorer";
+import { ProjectCard } from "@/components/projects/ProjectCard";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
 
 export const dynamic = "force-dynamic";
@@ -12,7 +13,9 @@ export const metadata = {
 
 export default async function ProjectsPage() {
   const user = await requireUser();
-  const projects = await listProjects(user.id);
+  const visible = await listVisibleProjects();
+  const projects = visible.filter((p) => p.user_id === user.id);
+  const shared = visible.filter((p) => p.user_id !== user.id);
 
   return (
     <div className="space-y-8">
@@ -24,8 +27,19 @@ export default async function ProjectsPage() {
       </div>
 
       <div className="grid gap-8 lg:grid-cols-[1fr_minmax(320px,360px)]">
-        <section className="order-2 space-y-4 lg:order-1">
+        <section className="order-2 space-y-8 lg:order-1">
           <ProjectsExplorer projects={projects} />
+
+          {shared.length > 0 && (
+            <div className="space-y-4">
+              <h2 className="text-lg font-bold">Shared with you</h2>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {shared.map((project) => (
+                  <ProjectCard key={project.id} project={project} />
+                ))}
+              </div>
+            </div>
+          )}
         </section>
 
         <aside className="order-1 lg:order-2">

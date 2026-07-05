@@ -27,3 +27,8 @@ export function canShareReports(plan: string | null | undefined): boolean {
 export function canUseWatchlists(plan: string | null | undefined): boolean {
   return planRank(plan) >= 2;
 }
+
+/** Team sharing (inviting collaborators) requires the Consultant plan. */
+export function canUseTeam(plan: string | null | undefined): boolean {
+  return planRank(plan) >= 3;
+}

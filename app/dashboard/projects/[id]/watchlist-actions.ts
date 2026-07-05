@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { requireUser, getProfile } from "@/lib/auth";
 import { createServerSupabase } from "@/lib/supabase/server";
+import { getProject } from "@/lib/data/projects";
 import { canUseWatchlists } from "@/lib/plan";
 
 const schema = z.object({
@@ -43,6 +44,10 @@ export async function addWatchItemAction(
   if (!canUseWatchlists(profile?.plan)) {
     return { error: "Watchlists are available on the Radar plan and above — upgrade in Billing." };
   }
+
+  // Only the project owner can add watch items (members have read access).
+  const project = await getProject(user.id, projectId);
+  if (!project) return { error: "Only the project owner can edit the watchlist." };
 
   const supabase = await createServerSupabase();
   const { error } = await supabase.from("watchlist_items").insert({

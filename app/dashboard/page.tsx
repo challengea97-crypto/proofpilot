@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { FolderKanban, Plus, Sparkles, FileText, ArrowRight } from "lucide-react";
 import { requireUser, getProfile } from "@/lib/auth";
-import { listProjects } from "@/lib/data/projects";
+import { listVisibleProjects } from "@/lib/data/projects";
 import { countReports } from "@/lib/data/reports";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -37,12 +37,13 @@ function Stat({
 
 export default async function DashboardOverview() {
   const user = await requireUser();
-  const [projects, profile, reportCount] = await Promise.all([
-    listProjects(user.id),
+  const [visible, profile, reportCount] = await Promise.all([
+    listVisibleProjects(),
     getProfile(user),
     countReports(user.id),
   ]);
-  const recent = projects.slice(0, 4);
+  const projects = visible.filter((p) => p.user_id === user.id);
+  const recent = visible.slice(0, 4);
 
   return (
     <div className="space-y-8">

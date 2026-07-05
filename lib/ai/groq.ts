@@ -5,8 +5,9 @@ const GROQ_ENDPOINT = "https://api.groq.com/openai/v1/chat/completions";
 /**
  * Calls Groq (OpenAI-compatible) in JSON mode and returns the parsed object.
  * Throws a clear error on transport/parse failure; callers validate with zod.
+ * `model` overrides the default (e.g. groq/compound-mini for web-search runs).
  */
-export async function groqJson(system: string, user: string): Promise<unknown> {
+export async function groqJson(system: string, user: string, model?: string): Promise<unknown> {
   const response = await fetch(GROQ_ENDPOINT, {
     method: "POST",
     headers: {
@@ -14,7 +15,7 @@ export async function groqJson(system: string, user: string): Promise<unknown> {
       "content-type": "application/json",
     },
     body: JSON.stringify({
-      model: getGroqModel(),
+      model: model ?? getGroqModel(),
       messages: [
         { role: "system", content: system },
         { role: "user", content: user },

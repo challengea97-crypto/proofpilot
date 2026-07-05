@@ -16,15 +16,14 @@ function emptyLatest(): LatestAnalyses {
   }, {} as LatestAnalyses);
 }
 
-/** Latest analysis of each kind for a project. Resilient to an un-migrated table. */
-export async function getLatestAnalyses(userId: string, projectId: string): Promise<LatestAnalyses> {
+/** Latest analysis of each kind for a visible project (RLS scopes access). */
+export async function getLatestAnalyses(projectId: string): Promise<LatestAnalyses> {
   const latest = emptyLatest();
   try {
     const supabase = await createServerSupabase();
     const { data, error } = await supabase
       .from("analyses")
       .select("*")
-      .eq("user_id", userId)
       .eq("project_id", projectId)
       .order("created_at", { ascending: false });
     if (error) throw new Error(error.message);

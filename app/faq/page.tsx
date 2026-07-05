@@ -36,6 +36,14 @@ const FAQS: { q: string; a: string }[] = [
     a: "Yes. Every project, report and analysis is scoped to your account with database row-level security — only you can read your data. Shared reports are visible only to people you send the private link to.",
   },
   {
+    q: "Can I work with my team?",
+    a: "Yes. On the Consultant plan you can invite collaborators to any project by email — they get read access to the research, analyses, watchlist and report. Anyone can also receive a read-only report link, on any plan you've paid for.",
+  },
+  {
+    q: "Where does the AI's web data come from?",
+    a: "The Web Signals module runs a live web search at generation time and lists the source URLs it used, so you can check every claim. Other modules are model-reasoned and clearly framed as directional hypotheses.",
+  },
+  {
     q: "Can I cancel anytime?",
     a: "Yes. Manage or cancel your subscription anytime from Billing, which opens the secure Stripe customer portal.",
   },

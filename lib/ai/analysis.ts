@@ -17,7 +17,8 @@ export async function runAnalysis(kind: AnalysisKind, brief: ResearchBrief): Pro
   const config = ANALYSIS_CONFIG[kind];
   const raw = await groqJson(
     SYSTEM,
-    `${config.instruction}\n\nIdea: ${brief.idea}\nAudience: ${brief.audience || "(not specified)"}\nProblem: ${brief.problem || "(not specified)"}\n\nReturn the JSON object now.`
+    `${config.instruction}\n\nIdea: ${brief.idea}\nAudience: ${brief.audience || "(not specified)"}\nProblem: ${brief.problem || "(not specified)"}\n\nReturn the JSON object now.`,
+    config.model
   );
   return AnalysisResultSchema.parse(raw);
 }

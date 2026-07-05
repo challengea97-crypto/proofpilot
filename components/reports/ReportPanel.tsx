@@ -8,7 +8,15 @@ import { ReportView } from "@/components/reports/ReportView";
 import { Button } from "@/components/ui/Button";
 import { Alert } from "@/components/ui/Alert";
 
-export function ReportPanel({ projectId, report }: { projectId: string; report: FounderReport }) {
+export function ReportPanel({
+  projectId,
+  report,
+  canEdit = true,
+}: {
+  projectId: string;
+  report: FounderReport;
+  canEdit?: boolean;
+}) {
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
@@ -45,10 +53,12 @@ export function ReportPanel({ projectId, report }: { projectId: string; report: 
             <Download className="h-4 w-4" aria-hidden />
             Markdown
           </Button>
-          <Button onClick={save} loading={pending}>
-            <Save className="h-4 w-4" aria-hidden />
-            Save report
-          </Button>
+          {canEdit && (
+            <Button onClick={save} loading={pending}>
+              <Save className="h-4 w-4" aria-hidden />
+              Save report
+            </Button>
+          )}
         </div>
       </div>
 

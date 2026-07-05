@@ -41,7 +41,7 @@ export const ANALYSIS_TOOL_SCHEMA = {
   additionalProperties: false,
 };
 
-export const ANALYSIS_KINDS = ["swot", "strategy", "mvp", "pricing", "landing"] as const;
+export const ANALYSIS_KINDS = ["signals", "swot", "strategy", "mvp", "pricing", "landing"] as const;
 export type AnalysisKind = (typeof ANALYSIS_KINDS)[number];
 
 export function isAnalysisKind(value: string): value is AnalysisKind {
@@ -50,8 +50,15 @@ export function isAnalysisKind(value: string): value is AnalysisKind {
 
 export const ANALYSIS_CONFIG: Record<
   AnalysisKind,
-  { title: string; description: string; instruction: string }
+  { title: string; description: string; instruction: string; model?: string }
 > = {
+  signals: {
+    title: "Web Signals",
+    description: "Live web scan — recent market signals with their sources.",
+    instruction:
+      "Search the web for recent, real market signals relevant to this idea (funding news, competitor launches, trend data, community discussion). Use sections titled exactly: Recent signals, Sources. Each signal item must be a specific, dated-where-possible fact from your search — no invented facts. The Sources section items must be the URLs you actually used.",
+    model: "groq/compound-mini",
+  },
   swot: {
     title: "SWOT",
     description: "Strengths, weaknesses, opportunities and threats — the classic lens.",

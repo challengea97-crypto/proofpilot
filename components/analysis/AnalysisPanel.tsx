@@ -42,6 +42,7 @@ export function AnalysisPanel({
   description,
   latest,
   configured,
+  canEdit = true,
 }: {
   projectId: string;
   kind: AnalysisKind;
@@ -49,6 +50,7 @@ export function AnalysisPanel({
   description: string;
   latest: AnalysisResult | null;
   configured: boolean;
+  canEdit?: boolean;
 }) {
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -69,10 +71,14 @@ export function AnalysisPanel({
           <h2 className="text-lg font-bold">{title}</h2>
           <p className="text-sm text-neutral-400">{description}</p>
         </div>
-        <Button onClick={run} loading={pending} disabled={!configured}>
-          <Sparkles className="h-4 w-4" aria-hidden />
-          {latest ? "Re-generate" : "Generate"}
-        </Button>
+        {canEdit ? (
+          <Button onClick={run} loading={pending} disabled={!configured}>
+            <Sparkles className="h-4 w-4" aria-hidden />
+            {latest ? "Re-generate" : "Generate"}
+          </Button>
+        ) : (
+          <span className="text-sm text-neutral-500">View only — the owner generates this</span>
+        )}
       </div>
 
       {!configured && (

@@ -9,12 +9,13 @@ import { ResearchPanel } from "@/components/research/ResearchPanel";
 import { AnalysisPanel } from "@/components/analysis/AnalysisPanel";
 import { ReportPanel } from "@/components/reports/ReportPanel";
 import { WatchlistPanel } from "@/components/watchlist/WatchlistPanel";
+import { TeamPanel } from "@/components/team/TeamPanel";
 import { ANALYSIS_KINDS, ANALYSIS_CONFIG, type AnalysisKind, type AnalysisResult } from "@/lib/ai/analysis-kinds";
-import type { ProjectRow, WatchlistItemRow } from "@/lib/supabase/types";
+import type { ProjectRow, WatchlistItemRow, ProjectMemberRow } from "@/lib/supabase/types";
 import type { ResearchResult } from "@/lib/ai/research-schema";
 import type { FounderReport } from "@/lib/reports/build";
 
-type TabKey = "overview" | "research" | "watchlist" | "report" | AnalysisKind;
+type TabKey = "overview" | "research" | "watchlist" | "team" | "report" | AnalysisKind;
 
 function Field({ label, value }: { label: string; value: string | null }) {
   return (
@@ -101,6 +102,8 @@ export function ProjectWorkspace({
   analyses,
   report,
   watchItems,
+  members = [],
+  isOwner = true,
   configured,
 }: {
   project: ProjectRow;
@@ -109,6 +112,8 @@ export function ProjectWorkspace({
   analyses: Record<AnalysisKind, AnalysisResult | null>;
   report: FounderReport;
   watchItems: WatchlistItemRow[];
+  members?: ProjectMemberRow[];
+  isOwner?: boolean;
   configured: boolean;
 }) {
   const [tab, setTab] = useState<TabKey>("overview");
@@ -118,6 +123,7 @@ export function ProjectWorkspace({
     { key: "research", label: "Research" },
     ...ANALYSIS_KINDS.map((k) => ({ key: k as TabKey, label: ANALYSIS_CONFIG[k].title })),
     { key: "watchlist", label: "Watchlist" },
+    { key: "team", label: "Team" },
     { key: "report", label: "Report" },
   ];
 
@@ -153,10 +159,18 @@ export function ProjectWorkspace({
             latest={research}
             history={researchHistory}
             configured={configured}
+            canEdit={isOwner}
           />
         )}
-        {tab === "watchlist" && <WatchlistPanel projectId={project.id} items={watchItems} />}
-        {tab === "report" && <ReportPanel projectId={project.id} report={report} />}
+        {tab === "watchlist" && (
+          <WatchlistPanel projectId={project.id} items={watchItems} canEdit={isOwner} />
+        )}
+        {tab === "team" && (
+          <TeamPanel projectId={project.id} members={members} isOwner={isOwner} />
+        )}
+        {tab === "report" && (
+          <ReportPanel projectId={project.id} report={report} canEdit={isOwner} />
+        )}
         {ANALYSIS_KINDS.map(
           (k) =>
             tab === k && (
@@ -168,6 +182,7 @@ export function ProjectWorkspace({
                 description={ANALYSIS_CONFIG[k].description}
                 latest={analyses[k]}
                 configured={configured}
+                canEdit={isOwner}
               />
             )
         )}

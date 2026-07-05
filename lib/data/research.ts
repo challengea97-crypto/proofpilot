@@ -4,16 +4,12 @@ import type { ResearchRunRow } from "@/lib/supabase/types";
 
 export type ResearchScoreEntry = { score: number; createdAt: string };
 
-/** Most recent research run for a project owned by the user, or null. */
-export async function getLatestResearch(
-  userId: string,
-  projectId: string
-): Promise<ResearchRunRow | null> {
+/** Most recent research run for a visible project, or null (RLS scopes access). */
+export async function getLatestResearch(projectId: string): Promise<ResearchRunRow | null> {
   const supabase = await createServerSupabase();
   const { data, error } = await supabase
     .from("research_runs")
     .select("*")
-    .eq("user_id", userId)
     .eq("project_id", projectId)
     .order("created_at", { ascending: false })
     .limit(1)
@@ -25,7 +21,6 @@ export async function getLatestResearch(
 
 /** Score history (newest first) for the run-history strip. Resilient: [] on any failure. */
 export async function listResearchScores(
-  userId: string,
   projectId: string,
   limit = 10
 ): Promise<ResearchScoreEntry[]> {
@@ -34,7 +29,6 @@ export async function listResearchScores(
     const { data, error } = await supabase
       .from("research_runs")
       .select("result, created_at")
-      .eq("user_id", userId)
       .eq("project_id", projectId)
       .order("created_at", { ascending: false })
       .limit(limit);

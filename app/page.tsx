@@ -60,7 +60,7 @@ const STEPS = [
 ];
 
 const STATS = [
-  "7 AI modules",
+  "8 AI modules",
   "First report in about a minute",
   "Markdown & PDF export",
   "Cancel anytime",
@@ -90,6 +90,7 @@ const VS_ROWS: [string, boolean][] = [
   ["One-click founder report with PDF export", false],
   ["Shareable read-only report links", false],
   ["Watchlist monitoring with alerts", false],
+  ["Share projects with your team", false],
   ["Answers your questions conversationally", true],
 ];
 

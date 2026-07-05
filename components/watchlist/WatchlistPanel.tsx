@@ -29,9 +29,11 @@ function AddButton() {
 export function WatchlistPanel({
   projectId,
   items,
+  canEdit = true,
 }: {
   projectId: string;
   items: WatchlistItemRow[];
+  canEdit?: boolean;
 }) {
   const action = addWatchItemAction.bind(null, projectId);
   const [state, formAction] = useActionState(action, initialState);
@@ -45,21 +47,25 @@ export function WatchlistPanel({
         </p>
       </div>
 
-      <form action={formAction} className="grid gap-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
-        <div>
-          <Label htmlFor="label">Label</Label>
-          <Input id="label" name="label" required placeholder="e.g. Competitor X" maxLength={200} />
-          <FieldError>{state.fieldErrors?.label}</FieldError>
-        </div>
-        <div>
-          <Label htmlFor="url">URL (optional)</Label>
-          <Input id="url" name="url" type="url" placeholder="https://…" />
-          <FieldError>{state.fieldErrors?.url}</FieldError>
-        </div>
-        <AddButton />
-      </form>
+      {canEdit && (
+        <>
+          <form action={formAction} className="grid gap-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
+            <div>
+              <Label htmlFor="label">Label</Label>
+              <Input id="label" name="label" required placeholder="e.g. Competitor X" maxLength={200} />
+              <FieldError>{state.fieldErrors?.label}</FieldError>
+            </div>
+            <div>
+              <Label htmlFor="url">URL (optional)</Label>
+              <Input id="url" name="url" type="url" placeholder="https://…" />
+              <FieldError>{state.fieldErrors?.url}</FieldError>
+            </div>
+            <AddButton />
+          </form>
 
-      {state.error && <Alert tone="error">{state.error}</Alert>}
+          {state.error && <Alert tone="error">{state.error}</Alert>}
+        </>
+      )}
 
       {items.length === 0 ? (
         <EmptyState
@@ -88,17 +94,19 @@ export function WatchlistPanel({
                   </a>
                 )}
               </div>
-              <form action={deleteWatchItemAction}>
-                <input type="hidden" name="id" value={item.id} />
-                <input type="hidden" name="projectId" value={projectId} />
-                <button
-                  type="submit"
-                  aria-label={`Remove ${item.label}`}
-                  className="rounded-full p-2 text-neutral-500 transition hover:bg-neutral-800 hover:text-red-300"
-                >
-                  <Trash2 className="h-4 w-4" aria-hidden />
-                </button>
-              </form>
+              {canEdit && (
+                <form action={deleteWatchItemAction}>
+                  <input type="hidden" name="id" value={item.id} />
+                  <input type="hidden" name="projectId" value={projectId} />
+                  <button
+                    type="submit"
+                    aria-label={`Remove ${item.label}`}
+                    className="rounded-full p-2 text-neutral-500 transition hover:bg-neutral-800 hover:text-red-300"
+                  >
+                    <Trash2 className="h-4 w-4" aria-hidden />
+                  </button>
+                </form>
+              )}
             </li>
           ))}
         </ul>

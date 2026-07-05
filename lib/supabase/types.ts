@@ -270,6 +270,33 @@ export interface Database {
         };
         Relationships: [];
       };
+      project_members: {
+        Row: {
+          id: string;
+          project_id: string;
+          owner_id: string;
+          member_email: string;
+          role: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          project_id: string;
+          owner_id: string;
+          member_email: string;
+          role?: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          project_id?: string;
+          owner_id?: string;
+          member_email?: string;
+          role?: string;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
       contact_messages: {
         Row: {
           id: string;
@@ -311,3 +338,4 @@ export type ResearchRunRow = Database["public"]["Tables"]["research_runs"]["Row"
 export type AnalysisRow = Database["public"]["Tables"]["analyses"]["Row"];
 export type WatchlistItemRow = Database["public"]["Tables"]["watchlist_items"]["Row"];
 export type NotificationRow = Database["public"]["Tables"]["notifications"]["Row"];
+export type ProjectMemberRow = Database["public"]["Tables"]["project_members"]["Row"];

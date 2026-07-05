@@ -22,13 +22,13 @@ export async function saveReportAction(projectId: string): Promise<SaveReportSta
 
   let research: ResearchResult | null = null;
   try {
-    const run = await getLatestResearch(user.id, projectId);
+    const run = await getLatestResearch(projectId);
     const parsed = run ? ResearchResultSchema.safeParse(run.result) : null;
     research = parsed && parsed.success ? parsed.data : null;
   } catch {
     research = null;
   }
-  const analyses = await getLatestAnalyses(user.id, projectId);
+  const analyses = await getLatestAnalyses(projectId);
 
   const report = buildFounderReport(
     {
