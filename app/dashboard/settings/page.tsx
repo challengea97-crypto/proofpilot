@@ -34,7 +34,7 @@ export default async function SettingsPage() {
       <Card>
         <CardHeader>
           <CardTitle>Account</CardTitle>
-          <CardDescription>Your ProofPilot identity.</CardDescription>
+          <CardDescription>Your Teckro identity.</CardDescription>
         </CardHeader>
         <div>
           <Row label="Email">{user.email ?? "—"}</Row>

@@ -27,7 +27,7 @@ export default async function LoginPage() {
           <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white text-neutral-950">
             <ShieldCheck size={22} />
           </span>
-          <span className="text-xl font-black">ProofPilot</span>
+          <span className="text-xl font-black">Teckro</span>
         </Link>
 
         <div className="rounded-3xl border border-neutral-800/80 bg-neutral-950/70 p-6 shadow-glow backdrop-blur sm:p-8">

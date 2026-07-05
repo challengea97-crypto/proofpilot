@@ -67,7 +67,7 @@ export default function HomePage() {
             Validate your startup before you waste months building.
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-neutral-300">
-            ProofPilot turns a raw idea into a source-aware report: competitors, complaints, landing
+            Teckro turns a raw idea into a source-aware report: competitors, complaints, landing
             copy, MVP roadmap, pricing strategy, and launch plan.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
@@ -158,7 +158,7 @@ export default function HomePage() {
 
       <footer className="mx-auto max-w-7xl px-6 py-10 text-sm text-neutral-600">
         <div className="flex flex-col items-center justify-between gap-4 border-t border-neutral-800 pt-8 sm:flex-row">
-          <p>© {new Date().getFullYear()} ProofPilot. Proof before build.</p>
+          <p>© {new Date().getFullYear()} Teckro. Proof before build.</p>
           <div className="flex gap-4">
             <Link href="/pricing" className="hover:text-neutral-300">
               Pricing

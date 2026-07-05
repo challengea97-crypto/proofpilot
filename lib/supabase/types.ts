@@ -1,5 +1,5 @@
 /**
- * Database types for the ProofPilot Supabase schema.
+ * Database types for the Teckro Supabase schema.
  *
  * Hand-authored to mirror `supabase/schema.sql`. Keep this in sync with the
  * schema whenever tables/columns change. (Can be regenerated later with

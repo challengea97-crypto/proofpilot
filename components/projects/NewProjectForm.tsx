@@ -27,7 +27,7 @@ export function NewProjectForm() {
 
       <div>
         <Label htmlFor="name">Project name</Label>
-        <Input id="name" name="name" required placeholder="e.g. ProofPilot" maxLength={120} />
+        <Input id="name" name="name" required placeholder="e.g. Teckro" maxLength={120} />
         <FieldError>{state.fieldErrors?.name}</FieldError>
       </div>
 

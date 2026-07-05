@@ -78,7 +78,7 @@ export function AppShell({
         <ShieldCheck size={20} />
       </span>
       <span>
-        <span className="block text-lg font-black leading-none">ProofPilot</span>
+        <span className="block text-lg font-black leading-none">Teckro</span>
         <span className="mt-1 block text-xs text-neutral-500">Proof before build</span>
       </span>
     </Link>
@@ -143,7 +143,7 @@ export function AppShell({
           >
             <Menu className="h-5 w-5" aria-hidden />
           </button>
-          <span className="text-base font-black">ProofPilot</span>
+          <span className="text-base font-black">Teckro</span>
         </header>
 
         <main className="mx-auto w-full max-w-6xl flex-1 animate-fade-in px-4 py-8 sm:px-6 lg:px-10">

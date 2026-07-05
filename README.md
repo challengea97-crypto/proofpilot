@@ -1,4 +1,4 @@
-# ProofPilot
+# Teckro
 
 AI startup validation platform with live research, competitor intelligence, review intelligence, landing-page audits, AI strategy reports, and Stripe payments.
 

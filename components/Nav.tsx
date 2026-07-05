@@ -10,7 +10,7 @@ export function Nav() {
           <ShieldCheck size={22} />
         </span>
         <span>
-          <span className="block text-xl font-black leading-none">ProofPilot</span>
+          <span className="block text-xl font-black leading-none">Teckro</span>
           <span className="mt-1 block text-xs text-neutral-400">Proof before build</span>
         </span>
       </Link>

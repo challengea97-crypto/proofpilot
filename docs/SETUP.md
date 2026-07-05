@@ -1,6 +1,6 @@
-# ProofPilot — Setup & Configuration
+# Teckro — Setup & Configuration
 
-ProofPilot builds and deploys **without any secrets**. Features that need a
+Teckro builds and deploys **without any secrets**. Features that need a
 service (auth, database, AI, billing) show a clear "setup needed" state until
 you add the matching environment variables — there is never fake data or fake
 AI output.
