@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Mail } from "lucide-react";
 import { createBrowserSupabase } from "@/lib/supabase/client";
@@ -146,6 +147,13 @@ export function AuthForm() {
             placeholder="At least 8 characters"
           />
         </div>
+        {mode === "signin" && (
+          <div className="text-right">
+            <Link href="/reset-password" className="text-sm text-neutral-400 hover:text-white">
+              Forgot password?
+            </Link>
+          </div>
+        )}
         <Button type="submit" className="w-full" loading={loading}>
           {mode === "signin" ? "Sign in" : "Create account"}
         </Button>
