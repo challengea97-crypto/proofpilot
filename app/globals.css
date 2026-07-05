@@ -51,3 +51,24 @@
     display: none;
   }
 }
+
+/* Print styles: clean, high-contrast PDF export for saved reports. */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  html,
+  body {
+    background: #ffffff !important;
+  }
+  .print-doc {
+    border: none !important;
+    box-shadow: none !important;
+    background: #ffffff !important;
+    color: #111111 !important;
+  }
+  .print-doc * {
+    color: #111111 !important;
+    border-color: #dddddd !important;
+  }
+}

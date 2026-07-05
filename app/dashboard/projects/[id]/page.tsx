@@ -7,6 +7,7 @@ import { getLatestResearch } from "@/lib/data/research";
 import { getLatestAnalyses } from "@/lib/data/analyses";
 import { isAnthropicConfigured } from "@/lib/env";
 import { ResearchResultSchema, type ResearchResult } from "@/lib/ai/research-schema";
+import { buildFounderReport } from "@/lib/reports/build";
 import { ProjectWorkspace } from "@/components/projects/ProjectWorkspace";
 import { DeleteProjectButton } from "@/components/projects/DeleteProjectButton";
 import { formatDate } from "@/lib/utils";
@@ -36,6 +37,11 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   }
 
   const analyses = await getLatestAnalyses(user.id, project.id);
+  const report = buildFounderReport(
+    { name: project.name, idea: project.idea, audience: project.audience, problem: project.problem },
+    research,
+    analyses
+  );
 
   return (
     <div className="space-y-8">
@@ -59,6 +65,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         project={project}
         research={research}
         analyses={analyses}
+        report={report}
         configured={configured}
       />
     </div>

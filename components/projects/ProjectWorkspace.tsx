@@ -7,11 +7,13 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/Badge";
 import { ResearchPanel } from "@/components/research/ResearchPanel";
 import { AnalysisPanel } from "@/components/analysis/AnalysisPanel";
+import { ReportPanel } from "@/components/reports/ReportPanel";
 import { ANALYSIS_KINDS, ANALYSIS_CONFIG, type AnalysisKind, type AnalysisResult } from "@/lib/ai/analysis-kinds";
 import type { ProjectRow } from "@/lib/supabase/types";
 import type { ResearchResult } from "@/lib/ai/research-schema";
+import type { FounderReport } from "@/lib/reports/build";
 
-type TabKey = "overview" | "research" | AnalysisKind;
+type TabKey = "overview" | "research" | "report" | AnalysisKind;
 
 function Field({ label, value }: { label: string; value: string | null }) {
   return (
@@ -95,11 +97,13 @@ export function ProjectWorkspace({
   project,
   research,
   analyses,
+  report,
   configured,
 }: {
   project: ProjectRow;
   research: ResearchResult | null;
   analyses: Record<AnalysisKind, AnalysisResult | null>;
+  report: FounderReport;
   configured: boolean;
 }) {
   const [tab, setTab] = useState<TabKey>("overview");
@@ -108,6 +112,7 @@ export function ProjectWorkspace({
     { key: "overview", label: "Overview" },
     { key: "research", label: "Research" },
     ...ANALYSIS_KINDS.map((k) => ({ key: k as TabKey, label: ANALYSIS_CONFIG[k].title })),
+    { key: "report", label: "Report" },
   ];
 
   return (
@@ -139,6 +144,7 @@ export function ProjectWorkspace({
         {tab === "research" && (
           <ResearchPanel projectId={project.id} latest={research} configured={configured} />
         )}
+        {tab === "report" && <ReportPanel projectId={project.id} report={report} />}
         {ANALYSIS_KINDS.map(
           (k) =>
             tab === k && (

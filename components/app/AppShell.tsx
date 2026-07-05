@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   FolderKanban,
+  FileText,
   Settings,
   ShieldCheck,
   Menu,
@@ -26,6 +27,7 @@ type NavItem = {
 const NAV_ITEMS: NavItem[] = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard, exact: true },
   { href: "/dashboard/projects", label: "Projects", icon: FolderKanban },
+  { href: "/dashboard/reports", label: "Reports", icon: FileText },
   { href: "/dashboard/settings", label: "Settings", icon: Settings },
 ];
 
@@ -99,7 +101,7 @@ export function AppShell({
   return (
     <div className="min-h-screen bg-ink lg:grid lg:grid-cols-[264px_1fr]">
       {/* Desktop sidebar */}
-      <aside className="sticky top-0 hidden h-screen flex-col border-r border-neutral-800 bg-neutral-950/40 lg:flex">
+      <aside className="sticky top-0 hidden h-screen flex-col border-r border-neutral-800 bg-neutral-950/40 lg:flex no-print">
         <div className="p-4">{brand}</div>
         <div className="flex-1 overflow-y-auto px-3 py-2">{nav}</div>
         {accountFooter}
@@ -134,7 +136,7 @@ export function AppShell({
 
       {/* Main column */}
       <div className="flex min-h-screen flex-col">
-        <header className="sticky top-0 z-30 flex items-center gap-3 border-b border-neutral-800 bg-ink/80 px-4 py-3 backdrop-blur lg:hidden">
+        <header className="sticky top-0 z-30 flex items-center gap-3 border-b border-neutral-800 bg-ink/80 px-4 py-3 backdrop-blur lg:hidden no-print">
           <button
             type="button"
             aria-label="Open menu"
