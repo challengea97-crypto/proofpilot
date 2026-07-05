@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getStripe } from "@/lib/stripe";
 import { createServiceSupabase } from "@/lib/supabase/server";
+import type { Json } from "@/lib/supabase/types";
 
 export async function POST(request: NextRequest) {
   const stripe = getStripe();
@@ -27,7 +28,7 @@ export async function POST(request: NextRequest) {
         checkout_session_id: session.id,
         plan: session.metadata?.plan || null,
         status: "completed",
-        raw: event
+        raw: event as unknown as Json
       });
     }
 
@@ -43,7 +44,7 @@ export async function POST(request: NextRequest) {
         customer_id: (event.data.object as any).customer || null,
         subscription_id: (event.data.object as any).id || null,
         status: (event.data.object as any).status || event.type,
-        raw: event
+        raw: event as unknown as Json
       });
     }
 
