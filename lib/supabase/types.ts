@@ -168,6 +168,36 @@ export interface Database {
         };
         Relationships: [];
       };
+      analyses: {
+        Row: {
+          id: string;
+          user_id: string;
+          project_id: string | null;
+          kind: string;
+          model: string | null;
+          result: Json;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          project_id?: string | null;
+          kind: string;
+          model?: string | null;
+          result: Json;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          project_id?: string | null;
+          kind?: string;
+          model?: string | null;
+          result?: Json;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
@@ -182,3 +212,4 @@ export type ProjectRow = Database["public"]["Tables"]["projects"]["Row"];
 export type ReportRow = Database["public"]["Tables"]["reports"]["Row"];
 export type BillingEventRow = Database["public"]["Tables"]["billing_events"]["Row"];
 export type ResearchRunRow = Database["public"]["Tables"]["research_runs"]["Row"];
+export type AnalysisRow = Database["public"]["Tables"]["analyses"]["Row"];

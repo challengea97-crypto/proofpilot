@@ -1,15 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Gauge, Target, ListChecks, Users, AlertCircle } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { requireUser } from "@/lib/auth";
 import { getProject } from "@/lib/data/projects";
 import { getLatestResearch } from "@/lib/data/research";
-import { generateLocalReport } from "@/lib/report";
+import { getLatestAnalyses } from "@/lib/data/analyses";
 import { isAnthropicConfigured } from "@/lib/env";
-import { ResearchResultSchema } from "@/lib/ai/research-schema";
-import { ResearchPanel } from "@/components/research/ResearchPanel";
-import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
+import { ResearchResultSchema, type ResearchResult } from "@/lib/ai/research-schema";
+import { ProjectWorkspace } from "@/components/projects/ProjectWorkspace";
 import { DeleteProjectButton } from "@/components/projects/DeleteProjectButton";
 import { formatDate } from "@/lib/utils";
 
@@ -19,54 +17,35 @@ export const metadata = {
   title: "Project",
 };
 
-function Field({ label, value }: { label: string; value: string | null }) {
-  return (
-    <div>
-      <p className="text-xs font-semibold uppercase tracking-widest text-neutral-500">{label}</p>
-      <p className="mt-1 whitespace-pre-wrap text-neutral-200">
-        {value?.trim() ? value : <span className="text-neutral-600">Not provided</span>}
-      </p>
-    </div>
-  );
-}
-
 export default async function ProjectDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const user = await requireUser();
   const project = await getProject(user.id, id);
   if (!project) notFound();
 
-  // Fast, deterministic local heuristic — clearly labelled as non-AI. The
-  // evidence-directional Live AI Research panel below calls Claude for real.
-  const snapshot = generateLocalReport({
-    idea: project.idea,
-    audience: project.audience ?? "",
-    problem: project.problem ?? "",
-  });
-
-  // Latest saved AI research run (resilient: if the research_runs table isn't
-  // migrated yet, treat as no runs rather than crashing the page).
   const configured = isAnthropicConfigured();
-  let latestResult = null;
+
+  // Latest AI research (resilient if the research_runs table isn't migrated yet).
+  let research: ResearchResult | null = null;
   try {
-    const latestRun = await getLatestResearch(user.id, project.id);
-    const parsed = latestRun ? ResearchResultSchema.safeParse(latestRun.result) : null;
-    latestResult = parsed && parsed.success ? parsed.data : null;
+    const run = await getLatestResearch(user.id, project.id);
+    const parsed = run ? ResearchResultSchema.safeParse(run.result) : null;
+    research = parsed && parsed.success ? parsed.data : null;
   } catch {
-    latestResult = null;
+    research = null;
   }
+
+  const analyses = await getLatestAnalyses(user.id, project.id);
 
   return (
     <div className="space-y-8">
-      <div>
-        <Link
-          href="/dashboard/projects"
-          className="inline-flex items-center gap-1 text-sm text-neutral-400 hover:text-white"
-        >
-          <ArrowLeft className="h-4 w-4" aria-hidden />
-          All projects
-        </Link>
-      </div>
+      <Link
+        href="/dashboard/projects"
+        className="inline-flex items-center gap-1 text-sm text-neutral-400 hover:text-white"
+      >
+        <ArrowLeft className="h-4 w-4" aria-hidden />
+        All projects
+      </Link>
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
@@ -76,78 +55,12 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         <DeleteProjectButton id={project.id} />
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-        <Card>
-          <CardHeader>
-            <CardTitle>Research brief</CardTitle>
-            <CardDescription>The inputs that drive validation for this project.</CardDescription>
-          </CardHeader>
-          <div className="space-y-5">
-            <Field label="Idea" value={project.idea} />
-            <div className="grid gap-5 sm:grid-cols-2">
-              <div className="flex items-start gap-2">
-                <Users className="mt-0.5 h-4 w-4 text-neutral-500" aria-hidden />
-                <Field label="Audience" value={project.audience} />
-              </div>
-              <div className="flex items-start gap-2">
-                <AlertCircle className="mt-0.5 h-4 w-4 text-neutral-500" aria-hidden />
-                <Field label="Problem" value={project.problem} />
-              </div>
-            </div>
-          </div>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle>Heuristic snapshot</CardTitle>
-              <Badge tone="neutral">Local · non-AI</Badge>
-            </div>
-            <CardDescription>
-              A fast local estimate. Run Live AI Research (coming to this view) for evidence-linked
-              analysis.
-            </CardDescription>
-          </CardHeader>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-4">
-              <div className="mb-2 flex items-center gap-2 text-neutral-400">
-                <Gauge className="h-4 w-4" aria-hidden />
-                <span className="text-sm">Score</span>
-              </div>
-              <p className="text-2xl font-black">{snapshot.score}/100</p>
-            </div>
-            <div className="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-4">
-              <div className="mb-2 flex items-center gap-2 text-neutral-400">
-                <Target className="h-4 w-4" aria-hidden />
-                <span className="text-sm">Confidence</span>
-              </div>
-              <p className="text-2xl font-black">{snapshot.confidence}%</p>
-            </div>
-          </div>
-
-          <p className="mt-4 text-sm leading-6 text-neutral-300">{snapshot.summary}</p>
-
-          <div className="mt-4">
-            <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-neutral-300">
-              <ListChecks className="h-4 w-4" aria-hidden />
-              Suggested next actions
-            </div>
-            <ul className="space-y-2">
-              {snapshot.nextActions.map((action) => (
-                <li
-                  key={action}
-                  className="rounded-xl bg-neutral-900/60 px-3 py-2 text-sm text-neutral-300"
-                >
-                  {action}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </Card>
-      </div>
-
-      <ResearchPanel projectId={project.id} latest={latestResult} configured={configured} />
+      <ProjectWorkspace
+        project={project}
+        research={research}
+        analyses={analyses}
+        configured={configured}
+      />
     </div>
   );
 }

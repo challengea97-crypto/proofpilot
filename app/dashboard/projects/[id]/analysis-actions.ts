@@ -1,0 +1,52 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { requireUser } from "@/lib/auth";
+import { createServerSupabase } from "@/lib/supabase/server";
+import { getProject } from "@/lib/data/projects";
+import { isAnthropicConfigured, getAnthropicModel } from "@/lib/env";
+import { runAnalysis } from "@/lib/ai/analysis";
+import { isAnalysisKind, type AnalysisResult } from "@/lib/ai/analysis-kinds";
+import type { Json } from "@/lib/supabase/types";
+
+export type AnalysisActionState = { error?: string; ok?: boolean };
+
+/** Run an analysis module for a project and persist the result. */
+export async function runAnalysisAction(
+  projectId: string,
+  kind: string
+): Promise<AnalysisActionState> {
+  const user = await requireUser();
+
+  if (!isAnalysisKind(kind)) return { error: "Unknown analysis type." };
+  if (!isAnthropicConfigured()) {
+    return { error: "AI is not configured. Set ANTHROPIC_API_KEY (see docs/SETUP.md)." };
+  }
+
+  const project = await getProject(user.id, projectId);
+  if (!project) return { error: "Project not found." };
+
+  let result: AnalysisResult;
+  try {
+    result = await runAnalysis(kind, {
+      idea: project.idea,
+      audience: project.audience ?? "",
+      problem: project.problem ?? "",
+    });
+  } catch (err) {
+    return { error: err instanceof Error ? err.message : "Analysis failed. Please try again." };
+  }
+
+  const supabase = await createServerSupabase();
+  const { error } = await supabase.from("analyses").insert({
+    user_id: user.id,
+    project_id: projectId,
+    kind,
+    model: getAnthropicModel(),
+    result: result as unknown as Json,
+  });
+  if (error) return { error: error.message };
+
+  revalidatePath(`/dashboard/projects/${projectId}`);
+  return { ok: true };
+}

@@ -49,6 +49,16 @@ create table if not exists public.research_runs (
   created_at timestamptz default now()
 );
 
+create table if not exists public.analyses (
+  id uuid primary key default uuid_generate_v4(),
+  user_id uuid references auth.users(id) on delete cascade,
+  project_id uuid references public.projects(id) on delete cascade,
+  kind text not null,
+  model text,
+  result jsonb not null,
+  created_at timestamptz default now()
+);
+
 alter table public.profiles enable row level security;
 alter table public.projects enable row level security;
 alter table public.reports enable row level security;
@@ -75,5 +85,12 @@ with check (auth.uid() = user_id);
 
 create policy "Users can manage own research runs"
 on public.research_runs for all
+using (auth.uid() = user_id)
+with check (auth.uid() = user_id);
+
+alter table public.analyses enable row level security;
+
+create policy "Users can manage own analyses"
+on public.analyses for all
 using (auth.uid() = user_id)
 with check (auth.uid() = user_id);

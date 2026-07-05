@@ -110,7 +110,7 @@ export function ResearchPanel({
   }
 
   return (
-    <section className="rounded-3xl border border-neutral-800/80 bg-neutral-950/60 p-6 shadow-glow">
+    <section className="space-y-5">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-lg font-bold">Live AI Research</h2>
