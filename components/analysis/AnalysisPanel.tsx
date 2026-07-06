@@ -5,9 +5,10 @@ import { Sparkles } from "lucide-react";
 import { runAnalysisAction } from "@/app/dashboard/projects/[id]/analysis-actions";
 import { Button } from "@/components/ui/Button";
 import { Alert } from "@/components/ui/Alert";
+import { Badge } from "@/components/ui/Badge";
 import { Spinner } from "@/components/ui/Spinner";
 import { playChime } from "@/lib/sound";
-import type { AnalysisKind, AnalysisResult } from "@/lib/ai/analysis-kinds";
+import { ANALYSIS_CONFIG, type AnalysisKind, type AnalysisResult } from "@/lib/ai/analysis-kinds";
 
 function AnalysisResultView({ result }: { result: AnalysisResult }) {
   return (
@@ -56,6 +57,7 @@ export function AnalysisPanel({
   const [error, setError] = useState<string | null>(null);
 
   function run() {
+    if (pending) return; // guard against double-clicks
     setError(null);
     startTransition(async () => {
       const res = await runAnalysisAction(projectId, kind);
@@ -68,7 +70,14 @@ export function AnalysisPanel({
     <section className="space-y-5">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-lg font-bold">{title}</h2>
+          <div className="flex items-center gap-2">
+            <h2 className="text-lg font-bold">{title}</h2>
+            {ANALYSIS_CONFIG[kind].sourced ? (
+              <Badge tone="accent">Live web · sources included</Badge>
+            ) : (
+              <Badge tone="neutral">AI inference</Badge>
+            )}
+          </div>
           <p className="text-sm text-neutral-400">{description}</p>
         </div>
         {canEdit ? (
@@ -90,7 +99,7 @@ export function AnalysisPanel({
       {pending && (
         <div className="flex items-center gap-2 py-4">
           <Spinner />
-          <span className="text-sm text-neutral-400">Generating…</span>
+          <span className="text-sm text-neutral-300">Generating — typically 10–30 seconds…</span>
         </div>
       )}
       {!pending && latest && <AnalysisResultView result={latest} />}

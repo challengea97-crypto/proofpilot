@@ -72,6 +72,7 @@ create table if not exists public.watchlist_items (
 -- Monitoring state for watchlist URLs (populated by the scheduled monitor job).
 alter table public.watchlist_items add column if not exists last_hash text;
 alter table public.watchlist_items add column if not exists last_checked_at timestamptz;
+alter table public.watchlist_items add column if not exists last_status text;
 
 create table if not exists public.notifications (
   id uuid primary key default uuid_generate_v4(),

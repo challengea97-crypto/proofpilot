@@ -32,6 +32,13 @@ export function ContactForm() {
   return (
     <form action={formAction} className="space-y-4">
       {state.error && <Alert tone="error">{state.error}</Alert>}
+      {/* Honeypot field — hidden from humans, bots fill it and get silently dropped. */}
+      <div className="hidden" aria-hidden="true">
+        <label>
+          Leave this field empty
+          <input type="text" name="website" tabIndex={-1} autoComplete="off" />
+        </label>
+      </div>
       <div>
         <Label htmlFor="name">Name</Label>
         <Input id="name" name="name" required maxLength={120} />

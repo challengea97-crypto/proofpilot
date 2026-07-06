@@ -40,7 +40,7 @@ export function Footer() {
               <span className="text-lg font-black">Teckro</span>
             </Link>
             <p className="mt-3 max-w-xs text-sm text-neutral-500">
-              Evidence-linked startup validation. Proof before build.
+              AI startup validation. Proof before build.
             </p>
           </div>
           {COLUMNS.map((col) => (

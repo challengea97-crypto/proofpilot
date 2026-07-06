@@ -12,6 +12,7 @@ import { Input, Label, FieldError } from "@/components/ui/form";
 import { Button } from "@/components/ui/Button";
 import { Alert } from "@/components/ui/Alert";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { timeAgo } from "@/lib/utils";
 import type { WatchlistItemRow } from "@/lib/supabase/types";
 
 const initialState: WatchFormState = {};
@@ -92,6 +93,18 @@ export function WatchlistPanel({
                     <span className="truncate">{item.url}</span>
                     <ExternalLink className="h-3 w-3 shrink-0" aria-hidden />
                   </a>
+                )}
+                {item.last_checked_at && (
+                  <p
+                    className={`mt-0.5 text-xs ${
+                      item.last_status && item.last_status !== "ok"
+                        ? "text-amber-400"
+                        : "text-neutral-600"
+                    }`}
+                  >
+                    Checked {timeAgo(item.last_checked_at)}
+                    {item.last_status && item.last_status !== "ok" ? ` · ${item.last_status}` : ""}
+                  </p>
                 )}
               </div>
               {canEdit && (

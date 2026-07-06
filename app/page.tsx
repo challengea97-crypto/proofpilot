@@ -49,14 +49,14 @@ const FEATURES = [
   {
     icon: FileText,
     title: "Founder report",
-    body: "MVP scope, strategy, GTM and a launch checklist — exportable and evidence-linked.",
+    body: "MVP scope, strategy, GTM and a launch checklist — exportable, with web sources listed where the web was searched.",
   },
 ];
 
 const STEPS = [
   { n: "01", title: "Describe your idea", body: "Add the idea, audience and the problem you remove." },
   { n: "02", title: "Run the analysis", body: "Competitors, demand, reviews and pricing, gathered and scored." },
-  { n: "03", title: "Get a founder report", body: "A source-aware plan you can act on — or share with your team." },
+  { n: "03", title: "Get a founder report", body: "A decision-ready plan you can act on — or share with your team." },
 ];
 
 const STATS = [
@@ -142,14 +142,15 @@ export default function HomePage() {
         <div>
           <div className="inline-flex items-center gap-2 rounded-full border border-neutral-800 bg-neutral-950 px-4 py-2 text-sm text-neutral-300">
             <ShieldCheck className="h-4 w-4" aria-hidden />
-            Evidence-linked startup validation
+            AI-powered startup validation
           </div>
-          <h1 className="mt-6 max-w-4xl text-5xl font-black tracking-tight sm:text-7xl">
+          <h1 className="mt-6 max-w-4xl text-5xl font-black tracking-tight text-gradient sm:text-7xl">
             Validate your startup before you waste months building.
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-neutral-300">
-            Teckro turns a raw idea into a source-aware report: competitors, complaints, landing
-            copy, MVP roadmap, pricing strategy, and launch plan.
+            Teckro turns a raw idea into a decision-ready report: competitors, complaints, landing
+            copy, MVP roadmap, pricing strategy, and launch plan — with live web signals and their
+            sources.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link href="/dashboard" className={buttonVariants({ size: "lg" })}>

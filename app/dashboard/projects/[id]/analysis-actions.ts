@@ -38,13 +38,21 @@ export async function runAnalysisAction(
     return { error: err instanceof Error ? err.message : "Analysis failed. Please try again." };
   }
 
+  // Store the exact input brief and timestamp alongside the result for audit;
+  // readers parse with a schema that ignores the underscore-prefixed keys.
+  const stored = {
+    ...result,
+    _brief: { idea: project.idea, audience: project.audience, problem: project.problem },
+    _generatedAt: new Date().toISOString(),
+  };
+
   const supabase = await createServerSupabase();
   const { error } = await supabase.from("analyses").insert({
     user_id: user.id,
     project_id: projectId,
     kind,
     model: getGroqModel(),
-    result: result as unknown as Json,
+    result: stored as unknown as Json,
   });
   if (error) return { error: error.message };
 

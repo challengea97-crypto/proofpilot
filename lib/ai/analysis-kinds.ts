@@ -50,7 +50,7 @@ export function isAnalysisKind(value: string): value is AnalysisKind {
 
 export const ANALYSIS_CONFIG: Record<
   AnalysisKind,
-  { title: string; description: string; instruction: string; model?: string }
+  { title: string; description: string; instruction: string; model?: string; sourced?: boolean }
 > = {
   signals: {
     title: "Web Signals",
@@ -58,6 +58,7 @@ export const ANALYSIS_CONFIG: Record<
     instruction:
       "Search the web for recent, real market signals relevant to this idea (funding news, competitor launches, trend data, community discussion). Use sections titled exactly: Recent signals, Sources. Each signal item must be a specific, dated-where-possible fact from your search — no invented facts. The Sources section items must be the URLs you actually used.",
     model: "groq/compound-mini",
+    sourced: true,
   },
   swot: {
     title: "SWOT",

@@ -6,6 +6,7 @@ import { requireUser, getProfile } from "@/lib/auth";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { getProject } from "@/lib/data/projects";
 import { canUseWatchlists } from "@/lib/plan";
+import { staticUrlCheck } from "@/lib/url-guard";
 
 const schema = z.object({
   label: z.string().trim().min(1, "Add a label").max(200),
@@ -38,6 +39,15 @@ export async function addWatchItemAction(
       if (key && !fieldErrors[key]) fieldErrors[key] = issue.message;
     }
     return { error: "Please fix the highlighted fields.", fieldErrors };
+  }
+
+  // SSRF hardening: only public http(s) URLs may be watched (the monitor
+  // re-validates with DNS resolution at fetch time).
+  if (parsed.data.url) {
+    const urlError = staticUrlCheck(parsed.data.url);
+    if (urlError) {
+      return { error: "Please fix the highlighted fields.", fieldErrors: { url: urlError } };
+    }
   }
 
   const profile = await getProfile(user);

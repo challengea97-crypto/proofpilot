@@ -211,6 +211,7 @@ export interface Database {
           note: string | null;
           last_hash: string | null;
           last_checked_at: string | null;
+          last_status: string | null;
           created_at: string;
         };
         Insert: {
@@ -222,6 +223,7 @@ export interface Database {
           note?: string | null;
           last_hash?: string | null;
           last_checked_at?: string | null;
+          last_status?: string | null;
           created_at?: string;
         };
         Update: {
@@ -233,6 +235,7 @@ export interface Database {
           note?: string | null;
           last_hash?: string | null;
           last_checked_at?: string | null;
+          last_status?: string | null;
           created_at?: string;
         };
         Relationships: [];

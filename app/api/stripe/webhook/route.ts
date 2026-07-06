@@ -2,61 +2,79 @@ import { NextRequest, NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { getStripe } from "@/lib/stripe";
 import { createServiceSupabase } from "@/lib/supabase/server";
-import { planFromPriceId } from "@/lib/pricing";
+import { planFromPriceId, PRICE_IDS } from "@/lib/pricing";
 import type { Json } from "@/lib/supabase/types";
 
 type ServiceClient = ReturnType<typeof createServiceSupabase>;
 
-/** Reflect a Stripe event onto the user's profile (plan + customer id). */
-async function syncProfile(supabase: ServiceClient, event: Stripe.Event) {
-  try {
-    if (event.type === "checkout.session.completed") {
-      const session = event.data.object as Stripe.Checkout.Session;
-      const userId = session.metadata?.user_id ?? session.client_reference_id ?? null;
-      if (!userId) return;
-      await supabase.from("profiles").upsert(
-        {
-          id: userId,
-          plan: session.metadata?.plan ?? "free",
-          stripe_customer_id: typeof session.customer === "string" ? session.customer : null,
-        },
-        { onConflict: "id" }
-      );
-      return;
-    }
+/**
+ * Reflect a Stripe event onto the user's profile (plan + customer id).
+ * Returns false when an entitlement write FAILED (so the route can return a
+ * 5xx and Stripe retries); returns true when synced or nothing to do.
+ */
+async function syncProfile(supabase: ServiceClient, event: Stripe.Event): Promise<boolean> {
+  if (
+    event.type === "checkout.session.completed" ||
+    event.type === "checkout.session.async_payment_succeeded"
+  ) {
+    const session = event.data.object as Stripe.Checkout.Session;
+    const userId = session.metadata?.user_id ?? session.client_reference_id ?? null;
+    if (!userId) return true;
 
-    if (
-      event.type === "customer.subscription.created" ||
-      event.type === "customer.subscription.updated" ||
-      event.type === "customer.subscription.deleted"
-    ) {
-      const subscription = event.data.object as Stripe.Subscription;
-      const userId = subscription.metadata?.user_id ?? null;
-      if (!userId) return;
+    // Only grant once the money is actually there. Delayed payment methods
+    // complete the session as "unpaid" and settle later via
+    // checkout.session.async_payment_succeeded.
+    if (session.payment_status !== "paid") return true;
 
-      const activeStatuses = ["active", "trialing"];
-      if (event.type === "customer.subscription.deleted" || !activeStatuses.includes(subscription.status)) {
-        await supabase.from("profiles").upsert({ id: userId, plan: "free" }, { onConflict: "id" });
-        return;
-      }
+    // Never write an unvalidated plan string from metadata.
+    const plan = session.metadata?.plan;
+    if (!plan || !(plan in PRICE_IDS)) return true;
 
-      const priceId = subscription.items.data[0]?.price?.id;
-      const plan = priceId ? planFromPriceId(priceId) : null;
-      if (plan) {
-        await supabase.from("profiles").upsert(
-          {
-            id: userId,
-            plan,
-            stripe_customer_id:
-              typeof subscription.customer === "string" ? subscription.customer : null,
-          },
-          { onConflict: "id" }
-        );
-      }
-    }
-  } catch {
-    // Never fail the webhook because of a profile-sync hiccup; Stripe retries.
+    const { error } = await supabase.from("profiles").upsert(
+      {
+        id: userId,
+        plan,
+        stripe_customer_id: typeof session.customer === "string" ? session.customer : null,
+      },
+      { onConflict: "id" }
+    );
+    return !error;
   }
+
+  if (
+    event.type === "customer.subscription.created" ||
+    event.type === "customer.subscription.updated" ||
+    event.type === "customer.subscription.deleted"
+  ) {
+    const subscription = event.data.object as Stripe.Subscription;
+    const userId = subscription.metadata?.user_id ?? null;
+    if (!userId) return true;
+
+    const activeStatuses = ["active", "trialing"];
+    if (event.type === "customer.subscription.deleted" || !activeStatuses.includes(subscription.status)) {
+      const { error } = await supabase
+        .from("profiles")
+        .upsert({ id: userId, plan: "free" }, { onConflict: "id" });
+      return !error;
+    }
+
+    const priceId = subscription.items.data[0]?.price?.id;
+    const plan = priceId ? planFromPriceId(priceId) : null;
+    if (!plan) return true;
+
+    const { error } = await supabase.from("profiles").upsert(
+      {
+        id: userId,
+        plan,
+        stripe_customer_id:
+          typeof subscription.customer === "string" ? subscription.customer : null,
+      },
+      { onConflict: "id" }
+    );
+    return !error;
+  }
+
+  return true;
 }
 
 export async function POST(request: NextRequest) {
@@ -74,7 +92,32 @@ export async function POST(request: NextRequest) {
     const event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
     const supabase = createServiceSupabase();
 
-    // Audit log (best-effort).
+    // Idempotency: skip events already fully processed (audit row exists).
+    try {
+      const { data: existing } = await supabase
+        .from("billing_events")
+        .select("id")
+        .eq("stripe_event_id", event.id)
+        .maybeSingle();
+      if (existing) {
+        return NextResponse.json({ received: true, duplicate: true });
+      }
+    } catch {
+      // If the check fails, fall through — processing is idempotent anyway.
+    }
+
+    // Entitlement sync FIRST, and checked: if it fails, return 5xx so Stripe
+    // retries the delivery (upserts make retries safe).
+    const synced = await syncProfile(supabase, event);
+    if (!synced) {
+      return NextResponse.json(
+        { error: "Entitlement sync failed; retry requested." },
+        { status: 500 }
+      );
+    }
+
+    // Audit log (best-effort) — written last so it doubles as the
+    // "fully processed" idempotency marker.
     try {
       const object = event.data.object as unknown as Record<string, unknown>;
       await supabase.from("billing_events").insert({
@@ -89,10 +132,8 @@ export async function POST(request: NextRequest) {
         raw: event as unknown as Json,
       });
     } catch {
-      // Ignore duplicate/insert errors — the sync below is what grants access.
+      // Ignore audit failures — entitlements are already synced.
     }
-
-    await syncProfile(supabase, event);
 
     return NextResponse.json({ received: true });
   } catch (error) {

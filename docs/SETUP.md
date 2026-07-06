@@ -49,9 +49,9 @@ The three plan **price IDs are already in the code** (`lib/pricing.ts`):
 1. Add `STRIPE_SECRET_KEY` and `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`.
 2. Create a webhook endpoint at **Stripe → Developers → Webhooks**:
    - URL: `https://YOUR_DOMAIN/api/stripe/webhook`
-   - Events: `checkout.session.completed`, `customer.subscription.created`,
-     `customer.subscription.updated`, `customer.subscription.deleted`,
-     `invoice.payment_failed`
+   - Events: `checkout.session.completed`, `checkout.session.async_payment_succeeded`,
+     `customer.subscription.created`, `customer.subscription.updated`,
+     `customer.subscription.deleted`, `invoice.payment_failed`
 3. Copy the endpoint's **Signing secret** into `STRIPE_WEBHOOK_SECRET`.
 
 ## 3. Groq (Live AI Research + analysis modules)
@@ -69,7 +69,18 @@ repo, add the environment variables above, and deploy. Set `NEXT_PUBLIC_SITE_URL
 to your Netlify URL and redeploy so Stripe redirects and metadata resolve
 correctly.
 
-## 5. Scheduled watchlist monitoring (optional)
+## 5. Receiving contact messages
+
+Messages from the `/contact` form are stored in the `contact_messages` table —
+view them in **Supabase → Table Editor → contact_messages** (only the service
+role can read them; they are never exposed to app users).
+
+To also get an **in-app notification** when a message arrives: set `ADMIN_EMAILS`
+to your account email(s) and sign up with that email — new messages then appear
+in your Teckro notification inbox. A hidden honeypot field silently drops bot
+submissions.
+
+## 6. Scheduled watchlist monitoring (optional)
 
 Teckro ships a daily Netlify Scheduled Function (`netlify/functions/monitor.mts`)
 that checks watchlist URLs for changes and creates in-app notifications.

@@ -11,15 +11,15 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Teckro — Evidence-linked startup validation",
+    default: "Teckro — AI startup validation",
     template: "%s · Teckro",
   },
   description:
-    "Validate your startup before you build. Competitor intelligence, demand and review signals, pricing analysis, and an evidence-linked founder report.",
+    "Validate your startup before you build. AI competitor intelligence, demand signals, pricing analysis, live web signals with sources, and a decision-ready founder report.",
   openGraph: {
-    title: "Teckro — Evidence-linked startup validation",
+    title: "Teckro — AI startup validation",
     description:
-      "Turn a raw idea into a source-aware report: competitors, complaints, landing copy, MVP roadmap, pricing strategy, and launch plan.",
+      "Turn a raw idea into a decision-ready report: competitors, complaints, landing copy, MVP roadmap, pricing strategy, and launch plan.",
     url: siteUrl,
     siteName: "Teckro",
     type: "website",
