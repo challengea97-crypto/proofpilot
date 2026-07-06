@@ -54,7 +54,7 @@ export function getGroqKey(): string {
 
 /** Groq model used for AI features; overridable via GROQ_MODEL. */
 export function getGroqModel(): string {
-  return process.env.GROQ_MODEL || "llama-3.3-70b-versatile";
+  return process.env.GROQ_MODEL || "openai/gpt-oss-120b";
 }
 
 /** Absolute base URL of the deployment, used for Stripe redirects and links. */

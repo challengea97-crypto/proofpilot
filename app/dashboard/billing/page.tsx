@@ -2,6 +2,7 @@ import { requireUser, getProfile } from "@/lib/auth";
 import { isStripeConfigured } from "@/lib/env";
 import { planLabel } from "@/lib/pricing";
 import { PricingCards } from "@/components/PricingCards";
+import { PricingComparison } from "@/components/PricingComparison";
 import { ManageSubscriptionButton } from "@/components/billing/ManageSubscriptionButton";
 import { SetupNotice } from "@/components/SetupNotice";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
@@ -58,6 +59,8 @@ export default async function BillingPage() {
           />
         )}
       </div>
+
+      <PricingComparison />
     </div>
   );
 }
