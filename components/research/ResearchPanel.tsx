@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Spinner } from "@/components/ui/Spinner";
 import { playChime } from "@/lib/sound";
 import { timeAgo } from "@/lib/utils";
+import { verdictForScore } from "@/lib/reports/build";
 import type { ResearchResult, Competitor } from "@/lib/ai/research-schema";
 
 const CATEGORY_TONE: Record<Competitor["category"], "accent" | "warning" | "neutral"> = {
@@ -18,13 +19,6 @@ const CATEGORY_TONE: Record<Competitor["category"], "accent" | "warning" | "neut
 };
 
 export type ResearchHistoryEntry = { score: number; createdAt: string };
-
-/** Deterministic verdict derived from the opportunity score. */
-function verdictFor(score: number): { label: string; tone: "accent" | "warning" | "danger" } {
-  if (score >= 70) return { label: "Promising — worth pursuing", tone: "accent" };
-  if (score >= 50) return { label: "Possible — sharpen the wedge", tone: "warning" };
-  return { label: "High risk — rethink the angle", tone: "danger" };
-}
 
 function List({ icon: Icon, title, items }: { icon: typeof Users; title: string; items: string[] }) {
   if (items.length === 0) return null;
@@ -46,7 +40,7 @@ function List({ icon: Icon, title, items }: { icon: typeof Users; title: string;
 }
 
 function ResearchResultView({ result }: { result: ResearchResult }) {
-  const verdict = verdictFor(result.opportunityScore);
+  const verdict = verdictForScore(result.opportunityScore);
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3 rounded-2xl border border-neutral-800 bg-neutral-900/60 p-4">
