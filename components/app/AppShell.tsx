@@ -11,12 +11,13 @@ import {
   Bell,
   Shield,
   Settings,
-  ShieldCheck,
   Menu,
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/Badge";
+import { BrandMark } from "@/components/BrandMark";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { SignOutButton } from "@/components/app/SignOutButton";
 import { planLabel } from "@/lib/pricing";
 
@@ -95,10 +96,8 @@ export function AppShell({
   );
 
   const brand = (
-    <Link href="/dashboard" className="flex items-center gap-3 px-2" onClick={() => setOpen(false)}>
-      <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white text-neutral-950">
-        <ShieldCheck size={20} />
-      </span>
+    <Link href="/dashboard" className="flex items-center gap-2.5 px-2" onClick={() => setOpen(false)}>
+      <BrandMark className="h-10 w-10 rounded-2xl" />
       <span>
         <span className="block text-lg font-black leading-none">Teckro</span>
         <span className="mt-1 block text-xs text-neutral-500">Proof before build</span>
@@ -128,7 +127,10 @@ export function AppShell({
       </a>
       {/* Desktop sidebar */}
       <aside className="sticky top-0 hidden h-screen flex-col border-r border-neutral-800 bg-neutral-950/40 lg:flex no-print">
-        <div className="p-4">{brand}</div>
+        <div className="flex items-center justify-between p-4">
+          {brand}
+          <ThemeToggle />
+        </div>
         <div className="flex-1 overflow-y-auto px-3 py-2">{nav}</div>
         {accountFooter}
       </aside>
@@ -172,6 +174,7 @@ export function AppShell({
             <Menu className="h-5 w-5" aria-hidden />
           </button>
           <span className="text-base font-black">Teckro</span>
+          <ThemeToggle className="ml-auto" />
         </header>
 
         <main id="main" className="mx-auto w-full max-w-6xl flex-1 animate-fade-in px-4 py-8 sm:px-6 lg:px-10">

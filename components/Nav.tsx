@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ShieldCheck, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { buttonVariants } from "@/components/ui/Button";
+import { BrandMark } from "@/components/BrandMark";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { cn } from "@/lib/utils";
 
 const LINKS: [string, string][] = [
@@ -19,10 +21,8 @@ export function Nav() {
   return (
     <header className="sticky top-0 z-40 border-b border-neutral-800/60 bg-ink/70 backdrop-blur">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4" aria-label="Main">
-        <Link href="/" className="flex items-center gap-3" onClick={() => setOpen(false)}>
-          <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white text-neutral-950">
-            <ShieldCheck size={20} />
-          </span>
+        <Link href="/" className="flex items-center gap-2.5" onClick={() => setOpen(false)}>
+          <BrandMark className="h-9 w-9 rounded-2xl" />
           <span className="text-xl font-black leading-none">Teckro</span>
         </Link>
 
@@ -39,6 +39,7 @@ export function Nav() {
         </div>
 
         <div className="hidden items-center gap-2 md:flex">
+          <ThemeToggle />
           <Link href="/login" className={buttonVariants({ variant: "secondary", size: "sm" })}>
             Sign in
           </Link>
@@ -47,15 +48,18 @@ export function Nav() {
           </Link>
         </div>
 
-        <button
-          type="button"
-          onClick={() => setOpen((v) => !v)}
-          aria-label="Toggle menu"
-          aria-expanded={open}
-          className="rounded-full p-2 text-neutral-300 transition hover:bg-neutral-900 hover:text-white md:hidden"
-        >
-          {open ? <X className="h-6 w-6" aria-hidden /> : <Menu className="h-6 w-6" aria-hidden />}
-        </button>
+        <div className="flex items-center gap-1 md:hidden">
+          <ThemeToggle />
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            aria-label="Toggle menu"
+            aria-expanded={open}
+            className="rounded-full p-2 text-neutral-300 transition hover:bg-neutral-900 hover:text-white"
+          >
+            {open ? <X className="h-6 w-6" aria-hidden /> : <Menu className="h-6 w-6" aria-hidden />}
+          </button>
+        </div>
       </nav>
 
       {open && (

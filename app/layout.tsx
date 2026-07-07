@@ -27,9 +27,14 @@ export const metadata: Metadata = {
   },
 };
 
+const THEME_SCRIPT = `(function(){try{var t=localStorage.getItem('teckro-theme');var dark=t?t==='dark':!window.matchMedia('(prefers-color-scheme: light)').matches;var e=document.documentElement;e.classList.add('dark');e.classList.toggle('light',!dark);}catch(e){}})();`;
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="dark" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+      </head>
       <body className="min-h-screen bg-ink font-sans text-neutral-100 antialiased">
         {children}
         <FaqDialog />

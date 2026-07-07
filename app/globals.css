@@ -52,6 +52,91 @@
   }
 }
 
+/* ---------------------------------------------------------------------------
+   LIGHT THEME
+   The app is authored in dark colors (no `dark:` variants). Rather than repaint
+   every component, `html.light` remaps the exact color utilities the app uses to
+   a light palette. Text stays high-contrast on every surface.
+--------------------------------------------------------------------------- */
+html.light {
+  color-scheme: light;
+}
+html.light body {
+  background-color: #f7f7f8;
+  color: #18181b;
+}
+
+/* Surfaces */
+html.light .bg-ink { background-color: #f7f7f8 !important; }
+html.light .bg-panel { background-color: #ffffff !important; }
+html.light .bg-neutral-950,
+html.light .bg-neutral-950\/60,
+html.light .bg-neutral-950\/50,
+html.light .bg-neutral-950\/40,
+html.light .bg-neutral-950\/70 { background-color: #ffffff !important; }
+html.light .bg-neutral-900,
+html.light .bg-neutral-900\/40,
+html.light .bg-neutral-900\/50,
+html.light .bg-neutral-900\/60,
+html.light .bg-neutral-900\/70,
+html.light .bg-neutral-900\/80 { background-color: #f1f1f3 !important; }
+html.light .bg-neutral-800 { background-color: #e4e4e7 !important; }
+
+/* Text */
+html.light .text-white { color: #0a0a0a !important; }
+html.light .text-neutral-100 { color: #18181b !important; }
+html.light .text-neutral-200 { color: #27272a !important; }
+html.light .text-neutral-300 { color: #3f3f46 !important; }
+html.light .text-neutral-400 { color: #52525b !important; }
+html.light .text-neutral-500 { color: #71717a !important; }
+html.light .text-neutral-600 { color: #8e8e97 !important; }
+html.light .text-neutral-700 { color: #a1a1aa !important; }
+
+/* Borders */
+html.light *,
+html.light ::before,
+html.light ::after { border-color: #e4e4e7; }
+html.light .border-neutral-800,
+html.light .border-neutral-800\/60,
+html.light .border-neutral-800\/80 { border-color: #e4e4e7 !important; }
+html.light .border-neutral-700 { border-color: #d4d4d8 !important; }
+
+/* Inverted surfaces: white buttons/badges become dark in light mode */
+html.light .bg-white { background-color: #111113 !important; }
+html.light .text-neutral-950 { color: #fafafa !important; }
+html.light .bg-white\/10 { background-color: rgba(0, 0, 0, 0.06) !important; }
+html.light .bg-white\/20 { background-color: rgba(0, 0, 0, 0.12) !important; }
+
+/* Gradients (dark neutral gradients → light). Overriding the from/to vars also
+   updates --tw-gradient-stops, which references them. */
+html.light [class*="from-neutral-9"] { --tw-gradient-from: #ffffff var(--tw-gradient-from-position) !important; }
+html.light [class*="to-neutral-9"] { --tw-gradient-to: #eef0f2 var(--tw-gradient-to-position) !important; }
+
+/* Effects */
+html.light .bg-grid {
+  background-image: radial-gradient(circle at 1px 1px, rgba(0, 0, 0, 0.06) 1px, transparent 0);
+}
+html.light .text-gradient {
+  background-image: linear-gradient(to bottom, #18181b, #71717a);
+}
+html.light .shadow-glow {
+  box-shadow: 0 20px 50px -24px rgba(0, 0, 0, 0.25);
+}
+
+/* Hover states */
+html.light .hover\:bg-neutral-900:hover { background-color: #ececef !important; }
+html.light .hover\:bg-neutral-800:hover { background-color: #e0e0e4 !important; }
+html.light .hover\:text-white:hover { color: #0a0a0a !important; }
+html.light .hover\:text-neutral-300:hover { color: #3f3f46 !important; }
+html.light .hover\:border-neutral-700:hover { border-color: #c4c4ca !important; }
+
+/* Focus ring offset on light backgrounds */
+html.light :focus-visible {
+  --tw-ring-color: rgba(0, 0, 0, 0.45);
+  --tw-ring-offset-color: #ffffff;
+}
+html.light ::selection { background-color: rgba(0, 0, 0, 0.12); }
+
 /* Print styles: clean, high-contrast PDF export for saved reports. */
 @media print {
   .no-print {

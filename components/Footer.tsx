@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ShieldCheck } from "lucide-react";
+import { BrandMark } from "@/components/BrandMark";
 
 const COLUMNS: { title: string; links: [string, string][] }[] = [
   {
@@ -35,9 +35,7 @@ export function Footer() {
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <Link href="/" className="flex items-center gap-2">
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white text-neutral-950">
-                <ShieldCheck size={18} />
-              </span>
+              <BrandMark className="h-9 w-9 rounded-xl" />
               <span className="text-lg font-black">Teckro</span>
             </Link>
             <p className="mt-3 max-w-xs text-sm text-neutral-500">

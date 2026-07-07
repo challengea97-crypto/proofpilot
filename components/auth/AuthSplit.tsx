@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ShieldCheck } from "lucide-react";
+import { BrandMark } from "@/components/BrandMark";
 import { AuthArtwork } from "@/components/auth/AuthArtwork";
 
 /** Two-column auth layout: branded artwork panel (lg+) on the left, form on the right. */
@@ -20,10 +20,8 @@ export function AuthSplit({
 
       <div className="flex min-h-screen flex-col items-center justify-center px-6 py-12">
         <div className="w-full max-w-md">
-          <Link href="/" className="mb-8 flex items-center justify-center gap-3 lg:hidden">
-            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white text-neutral-950">
-              <ShieldCheck size={22} />
-            </span>
+          <Link href="/" className="mb-8 flex items-center justify-center gap-2.5 lg:hidden">
+            <BrandMark className="h-11 w-11 rounded-2xl" />
             <span className="text-xl font-black">Teckro</span>
           </Link>
 

@@ -126,7 +126,7 @@ const FAQ_TEASER: [string, string][] = [
 
 export default function HomePage() {
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.10),transparent_30%),#070707]">
+    <main className="relative min-h-screen overflow-hidden bg-ink">
       <div
         className="pointer-events-none absolute -left-32 top-24 -z-10 h-96 w-96 rounded-full bg-emerald-500/10 blur-3xl animate-aurora"
         aria-hidden

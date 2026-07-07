@@ -1,5 +1,6 @@
-import { ShieldCheck, Search, Target, FileText } from "lucide-react";
+import { Search, Target, FileText } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { BrandMark } from "@/components/BrandMark";
 
 const POINTS: [LucideIcon, string][] = [
   [Search, "Live competitor & demand research"],
@@ -79,10 +80,8 @@ export function AuthArtwork() {
       />
       <div className="pointer-events-none absolute inset-0 bg-grid opacity-40" aria-hidden />
 
-      <div className="relative flex items-center gap-3">
-        <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white text-neutral-950">
-          <ShieldCheck size={22} />
-        </span>
+      <div className="relative flex items-center gap-2.5">
+        <BrandMark className="h-11 w-11 rounded-2xl" />
         <span className="text-xl font-black">Teckro</span>
       </div>
 
