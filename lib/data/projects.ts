@@ -54,3 +54,21 @@ export async function countProjects(userId: string): Promise<number> {
   if (error) throw new Error(error.message);
   return count ?? 0;
 }
+
+/** Projects the user created in the current calendar month (for plan quotas). */
+export async function countProjectsThisMonth(userId: string): Promise<number> {
+  try {
+    const now = new Date();
+    const monthStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)).toISOString();
+    const supabase = await createServerSupabase();
+    const { count, error } = await supabase
+      .from("projects")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", userId)
+      .gte("created_at", monthStart);
+    if (error) throw new Error(error.message);
+    return count ?? 0;
+  } catch {
+    return 0;
+  }
+}

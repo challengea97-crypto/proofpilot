@@ -1,21 +1,24 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Download, Save } from "lucide-react";
+import Link from "next/link";
+import { Download, Save, Lock } from "lucide-react";
 import { saveReportAction } from "@/app/dashboard/projects/[id]/report-actions";
 import { reportToMarkdown, reportSlug, reportIsEnriched, type FounderReport } from "@/lib/reports/build";
 import { ReportView } from "@/components/reports/ReportView";
-import { Button } from "@/components/ui/Button";
+import { Button, buttonVariants } from "@/components/ui/Button";
 import { Alert } from "@/components/ui/Alert";
 
 export function ReportPanel({
   projectId,
   report,
   canEdit = true,
+  canSave = true,
 }: {
   projectId: string;
   report: FounderReport;
   canEdit?: boolean;
+  canSave?: boolean;
 }) {
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -49,15 +52,27 @@ export function ReportPanel({
           <p className="text-sm text-neutral-400">Assembled from your research and analyses.</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="secondary" onClick={downloadMarkdown}>
-            <Download className="h-4 w-4" aria-hidden />
-            Markdown
-          </Button>
-          {canEdit && (
-            <Button onClick={save} loading={pending}>
-              <Save className="h-4 w-4" aria-hidden />
-              Save report
-            </Button>
+          {canSave ? (
+            <>
+              <Button variant="secondary" onClick={downloadMarkdown}>
+                <Download className="h-4 w-4" aria-hidden />
+                Markdown
+              </Button>
+              {canEdit && (
+                <Button onClick={save} loading={pending}>
+                  <Save className="h-4 w-4" aria-hidden />
+                  Save report
+                </Button>
+              )}
+            </>
+          ) : (
+            <Link
+              href="/dashboard/billing"
+              className={buttonVariants({ variant: "secondary", size: "md" })}
+            >
+              <Lock className="h-4 w-4" aria-hidden />
+              Upgrade to export &amp; share
+            </Link>
           )}
         </div>
       </div>

@@ -88,3 +88,34 @@ export async function groqJson(system: string, user: string, model?: string): Pr
 
   throw lastError;
 }
+
+/**
+ * Free-text Groq call (no JSON mode) — used for the web-search/browse step,
+ * where forcing JSON suppresses the model's tool use. Returns "" on failure.
+ */
+export async function groqText(system: string, user: string, model?: string): Promise<string> {
+  try {
+    const response = await fetch(GROQ_ENDPOINT, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${getGroqKey()}`,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        model: model ?? getGroqModel(),
+        messages: [
+          { role: "system", content: system },
+          { role: "user", content: user },
+        ],
+        temperature: 0.3,
+        max_tokens: 2048,
+      }),
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+    });
+    if (!response.ok) return "";
+    const data = (await response.json()) as { choices?: { message?: { content?: string } }[] };
+    return data?.choices?.[0]?.message?.content ?? "";
+  } catch {
+    return "";
+  }
+}

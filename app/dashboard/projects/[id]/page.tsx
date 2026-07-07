@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
-import { requireUser } from "@/lib/auth";
+import { requireUser, getProfile } from "@/lib/auth";
+import { effectivePlan } from "@/lib/plan";
 import { getVisibleProject } from "@/lib/data/projects";
 import { getLatestResearch, listResearchScores } from "@/lib/data/research";
 import { getLatestAnalyses } from "@/lib/data/analyses";
@@ -27,6 +28,8 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   if (!project) notFound();
   const isOwner = project.user_id === user.id;
 
+  const profile = await getProfile(user);
+  const plan = effectivePlan(profile);
   const configured = isAIConfigured();
 
   // Latest AI research (resilient if the research_runs table isn't migrated yet).
@@ -78,6 +81,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         watchItems={watchItems}
         members={members}
         isOwner={isOwner}
+        plan={plan}
         configured={configured}
       />
     </div>

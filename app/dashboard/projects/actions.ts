@@ -5,8 +5,9 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { requireUser, getProfile } from "@/lib/auth";
 import { createServerSupabase } from "@/lib/supabase/server";
-import { countProjects } from "@/lib/data/projects";
-import { planRank, effectivePlan, FREE_PROJECT_LIMIT } from "@/lib/plan";
+import { countProjectsThisMonth } from "@/lib/data/projects";
+import { effectivePlan, projectLimit } from "@/lib/plan";
+import { planLabel } from "@/lib/pricing";
 
 const projectSchema = z.object({
   name: z.string().trim().min(1, "Project name is required").max(120, "Keep the name under 120 characters"),
@@ -43,11 +44,16 @@ export async function createProjectAction(
     return { error: "Please fix the highlighted fields.", fieldErrors };
   }
 
-  // Free plan is capped; paid plans are unlimited.
-  const [profile, existingCount] = await Promise.all([getProfile(user), countProjects(user.id)]);
-  if (planRank(effectivePlan(profile)) < 1 && existingCount >= FREE_PROJECT_LIMIT) {
+  // Each plan has a monthly project quota (Founder Report = unlimited).
+  const [profile, monthCount] = await Promise.all([
+    getProfile(user),
+    countProjectsThisMonth(user.id),
+  ]);
+  const plan = effectivePlan(profile);
+  const limit = projectLimit(plan);
+  if (monthCount >= limit) {
     return {
-      error: `The free plan is limited to ${FREE_PROJECT_LIMIT} projects. Upgrade in Billing to add more.`,
+      error: `Your ${planLabel(plan)} plan allows ${limit} project${limit === 1 ? "" : "s"} per month. Upgrade in Billing to create more.`,
     };
   }
 

@@ -24,10 +24,10 @@ export async function POST(request: NextRequest) {
     const siteUrl = getSiteUrl();
     const stripe = getStripe();
     const price = PRICE_IDS[plan];
-    const mode: "payment" | "subscription" = plan === "founderReport" ? "payment" : "subscription";
 
+    // All plans are monthly subscriptions.
     const session = await stripe.checkout.sessions.create({
-      mode,
+      mode: "subscription",
       line_items: [{ price, quantity: 1 }],
       success_url: `${siteUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${siteUrl}/cancel`,
@@ -35,9 +35,7 @@ export async function POST(request: NextRequest) {
       client_reference_id: user.id,
       customer_email: user.email ?? undefined,
       metadata: { plan, user_id: user.id },
-      ...(mode === "subscription"
-        ? { subscription_data: { metadata: { plan, user_id: user.id } } }
-        : {}),
+      subscription_data: { metadata: { plan, user_id: user.id } },
     });
 
     return NextResponse.json({ url: session.url });

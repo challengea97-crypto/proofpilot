@@ -1,21 +1,26 @@
 import { Check, Minus } from "lucide-react";
 
-const PLANS = ["Free", "Founder Report", "Radar", "Consultant"];
+const PLAN_COLS = [
+  { name: "Free", price: "A$0" },
+  { name: "Radar", price: "A$25/mo" },
+  { name: "Consultant", price: "A$60/mo" },
+  { name: "Founder Report", price: "A$99/mo" },
+];
 
 type Cell = boolean | string;
 
 const ROWS: { feature: string; cells: [Cell, Cell, Cell, Cell] }[] = [
-  { feature: "Projects", cells: ["3", "Unlimited", "Unlimited", "Unlimited"] },
+  { feature: "Projects / month", cells: ["3", "10", "30", "Unlimited"] },
   { feature: "Live AI Research", cells: [true, true, true, true] },
-  { feature: "SWOT · Strategy · MVP · Pricing · Landing", cells: [true, true, true, true] },
-  { feature: "Web Signals (live web scan with sources)", cells: [true, true, true, true] },
-  { feature: "Founder report + Markdown / PDF export", cells: [true, true, true, true] },
-  { feature: "Saved reports", cells: [true, true, true, true] },
-  { feature: "Public share links", cells: [false, true, true, true] },
-  { feature: "Watchlists", cells: [false, false, true, true] },
-  { feature: "Scheduled monitoring & alerts", cells: [false, false, true, true] },
-  { feature: "Team sharing (invite collaborators)", cells: [false, false, false, true] },
-  { feature: "Priority support", cells: [false, false, false, true] },
+  { feature: "SWOT", cells: [true, true, true, true] },
+  { feature: "Strategy", cells: [true, true, true, true] },
+  { feature: "MVP Planner", cells: [false, true, true, true] },
+  { feature: "Pricing analysis", cells: [false, true, true, true] },
+  { feature: "Landing analysis", cells: [false, true, true, true] },
+  { feature: "Web Signals (live web + sources)", cells: [false, false, true, true] },
+  { feature: "Watchlists + monitoring", cells: [false, false, true, true] },
+  { feature: "Team sharing", cells: [false, false, true, true] },
+  { feature: "Founder Report (export + share)", cells: [false, false, false, true] },
 ];
 
 function CellView({ value }: { value: Cell }) {
@@ -33,15 +38,16 @@ export function PricingComparison() {
     <div className="mt-16">
       <h2 className="text-2xl font-black sm:text-3xl">Compare plans</h2>
       <div className="mt-6 overflow-x-auto rounded-3xl border border-neutral-800">
-        <table className="w-full min-w-[680px] border-collapse text-left">
+        <table className="w-full min-w-[720px] border-collapse text-left">
           <thead>
             <tr className="border-b border-neutral-800 bg-neutral-950/60">
               <th scope="col" className="p-4 text-sm font-bold text-neutral-300">
                 Feature
               </th>
-              {PLANS.map((plan) => (
-                <th key={plan} scope="col" className="p-4 text-center text-sm font-bold text-white">
-                  {plan}
+              {PLAN_COLS.map((plan) => (
+                <th key={plan.name} scope="col" className="p-4 text-center">
+                  <div className="text-sm font-bold text-white">{plan.name}</div>
+                  <div className="text-xs font-medium text-neutral-500">{plan.price}</div>
                 </th>
               ))}
             </tr>
@@ -63,7 +69,8 @@ export function PricingComparison() {
         </table>
       </div>
       <p className="mt-3 text-xs text-neutral-600">
-        Founder Report is a one-time purchase; Radar and Consultant are monthly subscriptions.
+        Every account starts with a 5-day free trial of Radar — no credit card required. All paid
+        plans are monthly and cancel anytime.
       </p>
     </div>
   );

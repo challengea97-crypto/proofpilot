@@ -2,13 +2,14 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { requireUser } from "@/lib/auth";
+import { requireUser, getProfile } from "@/lib/auth";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { getProject } from "@/lib/data/projects";
 import { getLatestResearch } from "@/lib/data/research";
 import { getLatestAnalyses } from "@/lib/data/analyses";
 import { ResearchResultSchema, type ResearchResult } from "@/lib/ai/research-schema";
 import { buildFounderReport } from "@/lib/reports/build";
+import { effectivePlan, canUseFounderReport } from "@/lib/plan";
 import { insertNotification } from "@/lib/notifications";
 import type { Json } from "@/lib/supabase/types";
 
@@ -19,6 +20,12 @@ export async function saveReportAction(projectId: string): Promise<SaveReportSta
   const user = await requireUser();
   const project = await getProject(user.id, projectId);
   if (!project) return { error: "Project not found." };
+
+  // Saving/exporting the Founder Report is the Founder Report plan feature.
+  const profile = await getProfile(user);
+  if (!canUseFounderReport(effectivePlan(profile))) {
+    return { error: "Saving the Founder Report needs the Founder Report plan — upgrade in Billing." };
+  }
 
   let research: ResearchResult | null = null;
   try {

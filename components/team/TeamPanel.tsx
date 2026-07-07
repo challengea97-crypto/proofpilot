@@ -12,6 +12,7 @@ import { Input, Label } from "@/components/ui/form";
 import { Button } from "@/components/ui/Button";
 import { Alert } from "@/components/ui/Alert";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { LockedFeature } from "@/components/LockedFeature";
 import { timeAgo } from "@/lib/utils";
 import type { ProjectMemberRow } from "@/lib/supabase/types";
 
@@ -31,10 +32,12 @@ export function TeamPanel({
   projectId,
   members,
   isOwner,
+  locked = false,
 }: {
   projectId: string;
   members: ProjectMemberRow[];
   isOwner: boolean;
+  locked?: boolean;
 }) {
   const action = addMemberAction.bind(null, projectId);
   const [state, formAction] = useActionState(action, initialState);
@@ -50,7 +53,14 @@ export function TeamPanel({
         </p>
       </div>
 
-      {isOwner && (
+      {locked && (
+        <LockedFeature
+          title="Team sharing is a Consultant feature"
+          description="Upgrade to Consultant to invite collaborators to your projects."
+        />
+      )}
+
+      {!locked && isOwner && (
         <>
           <form action={formAction} className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-end">
             <div>

@@ -1,6 +1,7 @@
 import "./globals.css";
 import type { Metadata, Viewport } from "next";
 import { getSiteUrl } from "@/lib/env";
+import { FaqDialog } from "@/components/FaqDialog";
 
 const siteUrl = getSiteUrl();
 
@@ -29,7 +30,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="dark">
-      <body className="min-h-screen bg-ink font-sans text-neutral-100 antialiased">{children}</body>
+      <body className="min-h-screen bg-ink font-sans text-neutral-100 antialiased">
+        {children}
+        <FaqDialog />
+      </body>
     </html>
   );
 }

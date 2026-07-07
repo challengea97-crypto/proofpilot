@@ -11,6 +11,7 @@ import { ReportPanel } from "@/components/reports/ReportPanel";
 import { WatchlistPanel } from "@/components/watchlist/WatchlistPanel";
 import { TeamPanel } from "@/components/team/TeamPanel";
 import { ANALYSIS_KINDS, ANALYSIS_CONFIG, type AnalysisKind, type AnalysisResult } from "@/lib/ai/analysis-kinds";
+import { canRunAnalysis, canUseWatchlists, canUseTeam, canUseFounderReport } from "@/lib/plan";
 import type { ProjectRow, WatchlistItemRow, ProjectMemberRow } from "@/lib/supabase/types";
 import type { ResearchResult } from "@/lib/ai/research-schema";
 import type { FounderReport } from "@/lib/reports/build";
@@ -104,6 +105,7 @@ export function ProjectWorkspace({
   watchItems,
   members = [],
   isOwner = true,
+  plan = "free",
   configured,
 }: {
   project: ProjectRow;
@@ -114,6 +116,7 @@ export function ProjectWorkspace({
   watchItems: WatchlistItemRow[];
   members?: ProjectMemberRow[];
   isOwner?: boolean;
+  plan?: string;
   configured: boolean;
 }) {
   const [tab, setTab] = useState<TabKey>("overview");
@@ -151,7 +154,11 @@ export function ProjectWorkspace({
         ))}
       </div>
 
-      <div className="rounded-3xl border border-neutral-800/80 bg-neutral-950/60 p-6 shadow-glow">
+      {/* key={tab} remounts the panel so it plays the open animation on switch. */}
+      <div
+        key={tab}
+        className="animate-fade-in rounded-3xl border border-neutral-800/80 bg-neutral-950/60 p-6 shadow-glow"
+      >
         {tab === "overview" && <Overview project={project} />}
         {tab === "research" && (
           <ResearchPanel
@@ -163,13 +170,28 @@ export function ProjectWorkspace({
           />
         )}
         {tab === "watchlist" && (
-          <WatchlistPanel projectId={project.id} items={watchItems} canEdit={isOwner} />
+          <WatchlistPanel
+            projectId={project.id}
+            items={watchItems}
+            canEdit={isOwner}
+            locked={isOwner && !canUseWatchlists(plan)}
+          />
         )}
         {tab === "team" && (
-          <TeamPanel projectId={project.id} members={members} isOwner={isOwner} />
+          <TeamPanel
+            projectId={project.id}
+            members={members}
+            isOwner={isOwner}
+            locked={isOwner && !canUseTeam(plan)}
+          />
         )}
         {tab === "report" && (
-          <ReportPanel projectId={project.id} report={report} canEdit={isOwner} />
+          <ReportPanel
+            projectId={project.id}
+            report={report}
+            canEdit={isOwner}
+            canSave={isOwner && canUseFounderReport(plan)}
+          />
         )}
         {ANALYSIS_KINDS.map(
           (k) =>
@@ -183,6 +205,7 @@ export function ProjectWorkspace({
                 latest={analyses[k]}
                 configured={configured}
                 canEdit={isOwner}
+                locked={isOwner && !canRunAnalysis(k, plan)}
               />
             )
         )}

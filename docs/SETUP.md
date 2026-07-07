@@ -40,11 +40,17 @@ Auth uses email/password and magic links out of the box.
 
 ## 2. Stripe (billing)
 
-The three plan **price IDs are already in the code** (`lib/pricing.ts`):
+All three plans are **monthly subscriptions**. In Stripe, create three recurring
+(monthly) prices and paste their IDs into `PRICE_IDS` in `lib/pricing.ts`:
 
-- Founder Report (one-time): `price_1TpSjcDuOK9gZri6Ve4G7wdZ`
-- Radar (subscription): `price_1TpSk5DuOK9gZri677WpGg6b`
-- Consultant (subscription): `price_1TpSlCDuOK9gZri6b6VYhVqC`
+- **Radar** — A$25 / month
+- **Consultant** — A$60 / month
+- **Founder Report** — A$99 / month
+
+(The IDs currently in the file are placeholders from the original project.)
+New signups get a 5-day free trial of Radar with **no card** — the trial is
+managed by the app (`profiles.trial_ends_at`), not Stripe, so no Stripe setup is
+needed for trials.
 
 1. Add `STRIPE_SECRET_KEY` and `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`.
 2. Create a webhook endpoint at **Stripe → Developers → Webhooks**:

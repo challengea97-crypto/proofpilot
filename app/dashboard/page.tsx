@@ -15,7 +15,7 @@ import { Badge } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ProjectCard } from "@/components/projects/ProjectCard";
 import { planLabel } from "@/lib/pricing";
-import { planRank, effectivePlan, isTrialActive, FREE_PROJECT_LIMIT } from "@/lib/plan";
+import { planRank, effectivePlan, isTrialActive, projectLimit } from "@/lib/plan";
 import { TrialBanner } from "@/components/billing/TrialBanner";
 import { timeAgo, truncate } from "@/lib/utils";
 
@@ -108,8 +108,12 @@ export default async function DashboardOverview() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <Stat
           label="Projects"
-          value={isFree ? `${own.length} / ${FREE_PROJECT_LIMIT}` : own.length}
-          hint={isFree ? "Free plan limit — upgrade for unlimited" : undefined}
+          value={own.length}
+          hint={
+            Number.isFinite(projectLimit(effective))
+              ? `${projectLimit(effective)} / month on your plan`
+              : "Unlimited projects"
+          }
           icon={<FolderKanban className="h-5 w-5" aria-hidden />}
         />
         <Stat

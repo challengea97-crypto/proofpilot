@@ -12,6 +12,7 @@ import { Input, Label, FieldError } from "@/components/ui/form";
 import { Button } from "@/components/ui/Button";
 import { Alert } from "@/components/ui/Alert";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { LockedFeature } from "@/components/LockedFeature";
 import { timeAgo } from "@/lib/utils";
 import type { WatchlistItemRow } from "@/lib/supabase/types";
 
@@ -31,10 +32,12 @@ export function WatchlistPanel({
   projectId,
   items,
   canEdit = true,
+  locked = false,
 }: {
   projectId: string;
   items: WatchlistItemRow[];
   canEdit?: boolean;
+  locked?: boolean;
 }) {
   const action = addWatchItemAction.bind(null, projectId);
   const [state, formAction] = useActionState(action, initialState);
@@ -48,7 +51,14 @@ export function WatchlistPanel({
         </p>
       </div>
 
-      {canEdit && (
+      {locked && (
+        <LockedFeature
+          title="Watchlists are a Consultant feature"
+          description="Upgrade to Consultant to monitor competitors and pages for changes."
+        />
+      )}
+
+      {!locked && canEdit && (
         <>
           <form action={formAction} className="grid gap-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
             <div>

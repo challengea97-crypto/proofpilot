@@ -1,12 +1,13 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireUser } from "@/lib/auth";
+import { requireUser, getProfile } from "@/lib/auth";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { getProject } from "@/lib/data/projects";
 import { isAIConfigured, getGroqModel } from "@/lib/env";
 import { runAnalysis } from "@/lib/ai/analysis";
 import { isAnalysisKind, ANALYSIS_CONFIG, type AnalysisResult } from "@/lib/ai/analysis-kinds";
+import { effectivePlan, canRunAnalysis } from "@/lib/plan";
 import { insertNotification } from "@/lib/notifications";
 import type { Json } from "@/lib/supabase/types";
 
@@ -26,6 +27,14 @@ export async function runAnalysisAction(
 
   const project = await getProject(user.id, projectId);
   if (!project) return { error: "Project not found." };
+
+  // Plan gate: this module may not be included in the user's plan.
+  const profile = await getProfile(user);
+  if (!canRunAnalysis(kind, effectivePlan(profile))) {
+    return {
+      error: `${ANALYSIS_CONFIG[kind].title} isn't included in your plan — upgrade in Billing to unlock it.`,
+    };
+  }
 
   let result: AnalysisResult;
   try {
