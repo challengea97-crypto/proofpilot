@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/env";
+import { TRIAL_DAYS } from "@/lib/plan";
 import type { ProfileRow } from "@/lib/supabase/types";
 
 /**
@@ -45,13 +46,27 @@ export const getProfile = cache(async (user: User): Promise<ProfileRow | null> =
 
   if (existing) return existing;
 
-  // Lazily create the profile on first sign-in (upsert tolerates a concurrent
-  // create between the select above and here).
-  const { data: created } = await supabase
+  // Lazily create the profile on first sign-in, starting the 5-day free trial
+  // of the cheapest paid plan. upsert tolerates a concurrent create.
+  const trialEndsAt = new Date(Date.now() + TRIAL_DAYS * 24 * 60 * 60 * 1000).toISOString();
+  let { data: created } = await supabase
     .from("profiles")
-    .upsert({ id: user.id, email: user.email ?? null }, { onConflict: "id" })
+    .upsert(
+      { id: user.id, email: user.email ?? null, trial_ends_at: trialEndsAt },
+      { onConflict: "id" }
+    )
     .select("*")
     .maybeSingle();
+
+  // Resilience: if the trial_ends_at column hasn't been migrated yet, still
+  // create the profile so sign-in never breaks (they just start on free).
+  if (!created) {
+    ({ data: created } = await supabase
+      .from("profiles")
+      .upsert({ id: user.id, email: user.email ?? null }, { onConflict: "id" })
+      .select("*")
+      .maybeSingle());
+  }
 
   return created ?? null;
 });

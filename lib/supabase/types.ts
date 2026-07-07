@@ -27,6 +27,7 @@ export interface Database {
           email: string | null;
           plan: string;
           stripe_customer_id: string | null;
+          trial_ends_at: string | null;
           created_at: string;
         };
         Insert: {
@@ -34,6 +35,7 @@ export interface Database {
           email?: string | null;
           plan?: string;
           stripe_customer_id?: string | null;
+          trial_ends_at?: string | null;
           created_at?: string;
         };
         Update: {
@@ -41,6 +43,7 @@ export interface Database {
           email?: string | null;
           plan?: string;
           stripe_customer_id?: string | null;
+          trial_ends_at?: string | null;
           created_at?: string;
         };
         Relationships: [];

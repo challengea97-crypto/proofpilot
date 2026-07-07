@@ -5,7 +5,7 @@ import { z } from "zod";
 import { requireUser, getProfile } from "@/lib/auth";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { getProject } from "@/lib/data/projects";
-import { canUseTeam } from "@/lib/plan";
+import { canUseTeam, effectivePlan } from "@/lib/plan";
 
 const emailSchema = z.string().trim().toLowerCase().email("Enter a valid email").max(200);
 
@@ -30,7 +30,7 @@ export async function addMemberAction(
   }
 
   const profile = await getProfile(user);
-  if (!canUseTeam(profile?.plan)) {
+  if (!canUseTeam(effectivePlan(profile))) {
     return { error: "Team sharing is on the Consultant plan — upgrade in Billing." };
   }
 

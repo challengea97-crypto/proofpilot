@@ -20,9 +20,12 @@ export function AuthForm() {
   const [mode, setMode] = useState<Mode>("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [agreed, setAgreed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const TERMS_ERROR = "Please accept the Terms and Privacy Policy to continue.";
 
   function reset() {
     setError(null);
@@ -41,13 +44,19 @@ export function AuthForm() {
         router.push(redirectTo);
         router.refresh();
       } else {
+        if (!agreed) {
+          setError(TERMS_ERROR);
+          return;
+        }
         const { error: signUpError } = await supabase.auth.signUp({
           email,
           password,
           options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
         });
         if (signUpError) throw signUpError;
-        setNotice("Account created. Check your email to confirm, then sign in.");
+        setNotice(
+          "Account created — your 5-day free trial has started. Check your email to confirm, then sign in."
+        );
         setMode("signin");
       }
     } catch (err) {
@@ -60,6 +69,10 @@ export function AuthForm() {
   async function handleMagicLink() {
     if (!email) {
       setError("Enter your email address first.");
+      return;
+    }
+    if (mode === "signup" && !agreed) {
+      setError(TERMS_ERROR);
       return;
     }
     setLoading(true);
@@ -154,8 +167,37 @@ export function AuthForm() {
             </Link>
           </div>
         )}
+
+        {mode === "signup" && (
+          <>
+            <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/[0.06] px-3 py-2.5 text-xs text-emerald-200">
+              ✨ Start your <strong>5-day free trial</strong> of Radar — no credit card required.
+            </div>
+            <label className="flex items-start gap-2.5 text-sm text-neutral-400">
+              <input
+                type="checkbox"
+                checked={agreed}
+                onChange={(e) => setAgreed(e.target.checked)}
+                aria-invalid={!agreed && Boolean(error) && error === TERMS_ERROR}
+                className="mt-0.5 h-4 w-4 shrink-0 rounded border-neutral-700 bg-neutral-900 accent-white"
+              />
+              <span>
+                I agree to the{" "}
+                <Link href="/terms" target="_blank" className="text-white underline hover:text-neutral-300">
+                  Terms
+                </Link>{" "}
+                and{" "}
+                <Link href="/privacy" target="_blank" className="text-white underline hover:text-neutral-300">
+                  Privacy Policy
+                </Link>
+                .
+              </span>
+            </label>
+          </>
+        )}
+
         <Button type="submit" className="w-full" loading={loading}>
-          {mode === "signin" ? "Sign in" : "Create account"}
+          {mode === "signin" ? "Sign in" : "Start 5-day free trial"}
         </Button>
       </form>
 

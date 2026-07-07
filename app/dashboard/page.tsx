@@ -15,7 +15,8 @@ import { Badge } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ProjectCard } from "@/components/projects/ProjectCard";
 import { planLabel } from "@/lib/pricing";
-import { planRank, FREE_PROJECT_LIMIT } from "@/lib/plan";
+import { planRank, effectivePlan, isTrialActive, FREE_PROJECT_LIMIT } from "@/lib/plan";
+import { TrialBanner } from "@/components/billing/TrialBanner";
 import { timeAgo, truncate } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -57,7 +58,9 @@ export default async function DashboardOverview() {
   const own = visible.filter((p) => p.user_id === user.id);
   const recentProjects = visible.slice(0, 4);
   const recentReports = reports.slice(0, 3);
-  const isFree = planRank(profile?.plan) < 1;
+  const effective = effectivePlan(profile);
+  const trial = isTrialActive(profile);
+  const isFree = planRank(effective) < 1;
   const latest = own[0] ?? visible[0];
 
   return (
@@ -74,6 +77,8 @@ export default async function DashboardOverview() {
           </Button>
         </Link>
       </div>
+
+      <TrialBanner profile={profile} />
 
       {/* Clear next action */}
       <div className="flex flex-col gap-4 rounded-3xl border border-neutral-800/80 bg-gradient-to-br from-neutral-900/80 to-neutral-950/60 p-6 sm:flex-row sm:items-center sm:justify-between">
@@ -115,11 +120,11 @@ export default async function DashboardOverview() {
         <Stat
           label="Plan"
           value={
-            <Badge tone={profile?.plan && profile.plan !== "free" ? "accent" : "neutral"}>
-              {planLabel(profile?.plan)}
+            <Badge tone={effective !== "free" ? "accent" : "neutral"}>
+              {trial ? "Radar · trial" : planLabel(effective)}
             </Badge>
           }
-          hint={isFree ? undefined : "Manage in Billing"}
+          hint={trial ? "Choose a plan in Billing" : isFree ? undefined : "Manage in Billing"}
           icon={<Sparkles className="h-5 w-5" aria-hidden />}
         />
       </div>

@@ -6,7 +6,7 @@ import { z } from "zod";
 import { requireUser, getProfile } from "@/lib/auth";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { countProjects } from "@/lib/data/projects";
-import { planRank, FREE_PROJECT_LIMIT } from "@/lib/plan";
+import { planRank, effectivePlan, FREE_PROJECT_LIMIT } from "@/lib/plan";
 
 const projectSchema = z.object({
   name: z.string().trim().min(1, "Project name is required").max(120, "Keep the name under 120 characters"),
@@ -45,7 +45,7 @@ export async function createProjectAction(
 
   // Free plan is capped; paid plans are unlimited.
   const [profile, existingCount] = await Promise.all([getProfile(user), countProjects(user.id)]);
-  if (planRank(profile?.plan) < 1 && existingCount >= FREE_PROJECT_LIMIT) {
+  if (planRank(effectivePlan(profile)) < 1 && existingCount >= FREE_PROJECT_LIMIT) {
     return {
       error: `The free plan is limited to ${FREE_PROJECT_LIMIT} projects. Upgrade in Billing to add more.`,
     };

@@ -154,13 +154,14 @@ export default function HomePage() {
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link href="/dashboard" className={buttonVariants({ size: "lg" })}>
-              Run free reality check
+              Start 5-day free trial
               <ArrowRight className="h-4 w-4" aria-hidden />
             </Link>
-            <Link href="/pricing" className={buttonVariants({ variant: "secondary", size: "lg" })}>
-              View pricing
+            <Link href="/features" className={buttonVariants({ variant: "secondary", size: "lg" })}>
+              Explore features
             </Link>
           </div>
+          <p className="mt-3 text-sm text-neutral-500">No credit card required · cancel anytime</p>
         </div>
 
         <div className="rounded-3xl border border-neutral-800/80 bg-neutral-950/60 p-6 shadow-glow backdrop-blur">
@@ -334,11 +335,11 @@ export default function HomePage() {
         <Reveal className="rounded-3xl border border-neutral-800/80 bg-gradient-to-br from-neutral-900 to-neutral-950 p-10 text-center">
           <h2 className="text-3xl font-black sm:text-4xl">Stop guessing. Start proving.</h2>
           <p className="mx-auto mt-3 max-w-xl text-neutral-400">
-            Run a free reality check now, then upgrade when you need a serious report.
+            Start your 5-day free trial — no credit card — and get your first report in minutes.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link href="/dashboard" className={buttonVariants({ size: "lg" })}>
-              Run free reality check
+              Start 5-day free trial
               <ArrowRight className="h-4 w-4" aria-hidden />
             </Link>
             <Link href="/pricing" className={buttonVariants({ variant: "secondary", size: "lg" })}>

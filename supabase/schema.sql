@@ -8,6 +8,9 @@ create table if not exists public.profiles (
   created_at timestamptz default now()
 );
 
+-- 5-day free trial of the cheapest paid plan (set when the profile is created).
+alter table public.profiles add column if not exists trial_ends_at timestamptz;
+
 create table if not exists public.projects (
   id uuid primary key default uuid_generate_v4(),
   user_id uuid references auth.users(id) on delete cascade,

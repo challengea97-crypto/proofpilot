@@ -68,6 +68,18 @@ const FAQS: { q: string; a: string }[] = [
     a: "Teckro has a built-in notification inbox with an unread badge — you're notified when research completes, analyses finish, reports are saved, and when a watched page changes.",
   },
   {
+    q: "How does the free trial work?",
+    a: "When you sign up you get a 5-day free trial of Radar — our cheapest plan — with no credit card required. You get the full Radar feature set during the trial. When it ends you can choose a plan to continue; otherwise your account moves to the Free plan.",
+  },
+  {
+    q: "Do I need a credit card to start?",
+    a: "No. Starting your 5-day trial needs only an email and password — no card. You only enter payment details (via Stripe's secure checkout) if you choose a paid plan.",
+  },
+  {
+    q: "Can I upgrade or downgrade later?",
+    a: "Yes. From Billing you can upgrade to a higher plan (Stripe checkout) or downgrade / change an existing subscription (Stripe's secure customer portal) at any time. Changes take effect immediately and you only ever have access to what your current plan includes.",
+  },
+  {
     q: "What does the free plan include?",
     a: "Up to 3 projects with full Live AI Research, all six analysis modules, founder reports and exports. Paid plans add unlimited projects, share links, watchlist monitoring and team sharing — the full comparison table is on the Pricing page.",
   },

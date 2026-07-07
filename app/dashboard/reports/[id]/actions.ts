@@ -4,7 +4,7 @@ import { randomUUID } from "crypto";
 import { revalidatePath } from "next/cache";
 import { requireUser, getProfile } from "@/lib/auth";
 import { createServerSupabase } from "@/lib/supabase/server";
-import { canShareReports } from "@/lib/plan";
+import { canShareReports, effectivePlan } from "@/lib/plan";
 
 export type ShareActionState = { error?: string };
 
@@ -17,7 +17,7 @@ export async function setReportShareAction(
 
   if (enable) {
     const profile = await getProfile(user);
-    if (!canShareReports(profile?.plan)) {
+    if (!canShareReports(effectivePlan(profile))) {
       return { error: "Public share links are available on paid plans — upgrade in Billing." };
     }
   }

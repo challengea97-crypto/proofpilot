@@ -5,6 +5,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const base = getSiteUrl();
   return [
     { url: `${base}/`, priority: 1 },
+    { url: `${base}/features`, priority: 0.9 },
     { url: `${base}/pricing`, priority: 0.8 },
     { url: `${base}/faq`, priority: 0.6 },
     { url: `${base}/about`, priority: 0.5 },

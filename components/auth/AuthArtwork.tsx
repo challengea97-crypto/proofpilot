@@ -31,6 +31,11 @@ function Radar() {
       ))}
       <line x1="10" y1="110" x2="210" y2="110" stroke="rgba(255,255,255,0.08)" />
       <line x1="110" y1="10" x2="110" y2="210" stroke="rgba(255,255,255,0.08)" />
+      {/* expanding scan pulse */}
+      <circle cx="110" cy="110" r="20" fill="none" stroke="rgba(52,211,153,0.5)" strokeWidth="1.5">
+        <animate attributeName="r" values="18;100" dur="3s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.6;0" dur="3s" repeatCount="indefinite" />
+      </circle>
       <g>
         <path d="M110 110 L110 10 A100 100 0 0 1 195 60 Z" fill="url(#teckro-sweep)" opacity="0.65" />
         <animateTransform
@@ -49,7 +54,15 @@ function Radar() {
         [70, 138],
         [112, 46],
       ].map(([x, y], i) => (
-        <circle key={i} cx={x} cy={y} r="4" fill="#34d399" />
+        <circle key={i} cx={x} cy={y} r="4" fill="#34d399">
+          <animate
+            attributeName="opacity"
+            values="1;0.25;1"
+            dur="2.4s"
+            begin={`${i * 0.35}s`}
+            repeatCount="indefinite"
+          />
+        </circle>
       ))}
       <circle cx="110" cy="110" r="5" fill="#ffffff" />
     </svg>

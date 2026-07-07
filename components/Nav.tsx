@@ -7,6 +7,7 @@ import { buttonVariants } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 
 const LINKS: [string, string][] = [
+  ["Features", "/features"],
   ["Pricing", "/pricing"],
   ["FAQ", "/faq"],
   ["About", "/about"],

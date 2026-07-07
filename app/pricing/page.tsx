@@ -17,9 +17,13 @@ export default function PricingPage() {
       />
       <Nav />
       <section className="mx-auto max-w-7xl px-6 py-12">
-        <h1 className="text-5xl font-black">Pricing</h1>
+        <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/25 bg-emerald-500/[0.06] px-4 py-1.5 text-sm text-emerald-200">
+          ✨ 5-day free trial · no credit card required
+        </div>
+        <h1 className="mt-5 text-5xl font-black">Simple, honest pricing</h1>
         <p className="mt-4 max-w-2xl text-neutral-300">
-          Start free, pay only when you need a serious report or recurring monitoring.
+          Every account starts with a 5-day free trial of Radar. Keep it, move up to Consultant, or
+          grab a one-time Founder Report — pay only for what you need.
         </p>
         <div className="mt-8">
           <PricingCards />

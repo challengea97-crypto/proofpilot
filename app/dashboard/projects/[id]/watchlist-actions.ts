@@ -5,7 +5,7 @@ import { z } from "zod";
 import { requireUser, getProfile } from "@/lib/auth";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { getProject } from "@/lib/data/projects";
-import { canUseWatchlists } from "@/lib/plan";
+import { canUseWatchlists, effectivePlan } from "@/lib/plan";
 import { staticUrlCheck } from "@/lib/url-guard";
 
 const schema = z.object({
@@ -51,7 +51,7 @@ export async function addWatchItemAction(
   }
 
   const profile = await getProfile(user);
-  if (!canUseWatchlists(profile?.plan)) {
+  if (!canUseWatchlists(effectivePlan(profile))) {
     return { error: "Watchlists are available on the Radar plan and above — upgrade in Billing." };
   }
 
