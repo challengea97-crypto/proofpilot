@@ -23,7 +23,7 @@ export default function PricingPage() {
         <h1 className="mt-5 text-5xl font-black">Simple, honest pricing</h1>
         <p className="mt-4 max-w-2xl text-neutral-300">
           Every account starts with a 5-day free trial of Radar. Keep it, move up to Consultant, or
-          grab a one-time Founder Report — pay only for what you need.
+          go all-in with the Founder Report plan — every feature, cancel anytime.
         </p>
         <div className="mt-8">
           <PricingCards />

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Check } from "lucide-react";
 import { PLANS, PLAN_LABELS, type PlanKey } from "@/lib/pricing";
 import { planRank, TRIAL_PLAN } from "@/lib/plan";
 import { Button } from "@/components/ui/Button";
@@ -26,11 +25,6 @@ function ctaFor(planKey: PlanKey, props: PricingCardsProps): Cta {
     return planKey === TRIAL_PLAN
       ? { label: "Start 5-day free trial", action: "signup", variant: "primary" }
       : { label: `Get ${PLAN_LABELS[planKey]}`, action: "checkout", variant: "secondary" };
-  }
-
-  // Founder Report is a one-time purchase — always available, never a tier move.
-  if (planKey === "founderReport") {
-    return { label: "Buy Founder Report", action: "checkout", variant: "secondary" };
   }
 
   // Trial users convert their trial plan.
@@ -142,11 +136,6 @@ export function PricingCards(props: PricingCardsProps) {
               >
                 {loading === plan.key ? "Opening…" : cta.label}
               </Button>
-              {featured && !props.currentPlan && (
-                <p className="mt-2 flex items-center justify-center gap-1 text-xs text-neutral-500">
-                  <Check className="h-3 w-3" aria-hidden /> No credit card required
-                </p>
-              )}
             </article>
           );
         })}

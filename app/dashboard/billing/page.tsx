@@ -62,7 +62,7 @@ export default async function BillingPage() {
         <PricingCards currentPlan={effective} isTrial={trial} hasCustomer={hasCustomer} />
       </div>
 
-      <PricingComparison />
+      <PricingComparison showTrialNote={trial} />
     </div>
   );
 }

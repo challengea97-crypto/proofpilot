@@ -38,10 +38,15 @@ const config: Config = {
           "0%, 100%": { transform: "translate3d(-8%, -6%, 0) scale(1)" },
           "50%": { transform: "translate3d(8%, 6%, 0) scale(1.25)" },
         },
+        "tab-in": {
+          from: { opacity: "0", transform: "translateY(12px) scale(0.99)" },
+          to: { opacity: "1", transform: "translateY(0) scale(1)" },
+        },
       },
       animation: {
         "fade-in": "fade-in 0.5s ease-out both",
         aurora: "aurora 22s ease-in-out infinite",
+        "tab-in": "tab-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) both",
       },
     },
   },

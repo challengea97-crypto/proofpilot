@@ -33,7 +33,7 @@ function CellView({ value }: { value: Cell }) {
   return <span className="text-sm font-semibold text-white">{value}</span>;
 }
 
-export function PricingComparison() {
+export function PricingComparison({ showTrialNote = true }: { showTrialNote?: boolean }) {
   return (
     <div className="mt-16">
       <h2 className="text-2xl font-black sm:text-3xl">Compare plans</h2>
@@ -69,8 +69,9 @@ export function PricingComparison() {
         </table>
       </div>
       <p className="mt-3 text-xs text-neutral-600">
-        Every account starts with a 5-day free trial of Radar — no credit card required. All paid
-        plans are monthly and cancel anytime.
+        {showTrialNote
+          ? "Every account starts with a 5-day free trial of Radar — no credit card required. All paid plans are monthly and cancel anytime."
+          : "All paid plans are monthly and cancel anytime."}
       </p>
     </div>
   );

@@ -157,7 +157,7 @@ export function ProjectWorkspace({
       {/* key={tab} remounts the panel so it plays the open animation on switch. */}
       <div
         key={tab}
-        className="animate-fade-in rounded-3xl border border-neutral-800/80 bg-neutral-950/60 p-6 shadow-glow"
+        className="animate-tab-in rounded-3xl border border-neutral-800/80 bg-neutral-950/60 p-6 shadow-glow motion-reduce:animate-none"
       >
         {tab === "overview" && <Overview project={project} />}
         {tab === "research" && (

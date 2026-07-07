@@ -13,11 +13,13 @@ import {
   Settings,
   Menu,
   X,
+  Search,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/Badge";
 import { BrandMark } from "@/components/BrandMark";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { CommandMenu } from "@/components/app/CommandMenu";
 import { SignOutButton } from "@/components/app/SignOutButton";
 import { planLabel } from "@/lib/pricing";
 
@@ -131,6 +133,19 @@ export function AppShell({
           {brand}
           <ThemeToggle />
         </div>
+        <div className="px-3 pb-1">
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new Event("open-command-menu"))}
+            className="flex w-full items-center justify-between rounded-2xl border border-neutral-800 bg-neutral-900/40 px-3 py-2 text-sm text-neutral-400 transition hover:border-neutral-700 hover:text-white"
+          >
+            <span className="flex items-center gap-2">
+              <Search className="h-4 w-4" aria-hidden />
+              Search…
+            </span>
+            <kbd className="rounded border border-neutral-700 px-1.5 py-0.5 text-[10px]">⌘K</kbd>
+          </button>
+        </div>
         <div className="flex-1 overflow-y-auto px-3 py-2">{nav}</div>
         {accountFooter}
       </aside>
@@ -181,6 +196,8 @@ export function AppShell({
           {children}
         </main>
       </div>
+
+      <CommandMenu />
     </div>
   );
 }

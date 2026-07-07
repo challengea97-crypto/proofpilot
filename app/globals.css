@@ -68,6 +68,8 @@ html.light body {
 
 /* Surfaces */
 html.light .bg-ink { background-color: #f7f7f8 !important; }
+html.light .bg-ink\/70 { background-color: rgba(247, 247, 248, 0.78) !important; }
+html.light .bg-ink\/80 { background-color: rgba(247, 247, 248, 0.85) !important; }
 html.light .bg-panel { background-color: #ffffff !important; }
 html.light .bg-neutral-950,
 html.light .bg-neutral-950\/60,

@@ -60,7 +60,7 @@ const STEPS = [
 ];
 
 const STATS = [
-  "8 AI modules",
+  "7 AI modules",
   "First report in about a minute",
   "Markdown & PDF export",
   "Cancel anytime",
@@ -144,7 +144,7 @@ export default function HomePage() {
             <ShieldCheck className="h-4 w-4" aria-hidden />
             AI-powered startup validation
           </div>
-          <h1 className="mt-6 max-w-4xl text-5xl font-black tracking-tight text-gradient sm:text-7xl">
+          <h1 className="mt-6 max-w-4xl pb-2 text-5xl font-black leading-[1.08] tracking-tight text-gradient sm:text-7xl">
             Validate your startup before you waste months building.
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-neutral-300">

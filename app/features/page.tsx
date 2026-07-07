@@ -143,9 +143,9 @@ export default function FeaturesPage() {
       <section className="mx-auto max-w-4xl px-6 py-20 text-center">
         <div className="inline-flex items-center gap-2 rounded-full border border-neutral-800 bg-neutral-950 px-4 py-2 text-sm text-neutral-300">
           <Search className="h-4 w-4" aria-hidden />
-          8 AI modules · one workflow
+          7 AI modules · one workflow
         </div>
-        <h1 className="mt-6 text-4xl font-black tracking-tight text-gradient sm:text-6xl">
+        <h1 className="mt-6 pb-2 text-4xl font-black leading-[1.08] tracking-tight text-gradient sm:text-6xl">
           Everything you need to validate an idea.
         </h1>
         <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-neutral-300">
